@@ -9,7 +9,7 @@ const { runTests } = require('vscode-test');
  * @param {string} extensionTestsPath Location of the tests to execute
  * @param {string} testWorkspace Location of a workspace to open for the test instance
  */
-function runIntegrationTests({
+async function runIntegrationTests({
   version,
   extensionDevelopmentPath,
   extensionTestsPath,
@@ -29,7 +29,7 @@ function runIntegrationTests({
     const _extensionTestsPath = CODE_TESTS_PATH || extensionTestsPath;
     const _testWorkspace = CODE_TESTS_WORKSPACE || testWorkspace;
     const launchArgs = _testWorkspace && [_testWorkspace];
-    runTests({
+    await runTests({
       version: _version,
       extensionDevelopmentPath: _extensionDevelopmentPath,
       extensionTestsPath: _extensionTestsPath,
