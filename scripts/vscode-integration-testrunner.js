@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 const { runTests } = require('vscode-test');
+const { join } = require('path');
 
 /**
  * A wrapper utlity for running VS Code integration tests. If a correspondent env variable is specified,
@@ -29,6 +30,9 @@ async function runIntegrationTests({
     const _extensionTestsPath = CODE_TESTS_PATH || extensionTestsPath;
     const _testWorkspace = CODE_TESTS_WORKSPACE || testWorkspace;
     const launchArgs = _testWorkspace && [_testWorkspace];
+    const logDir = join(process.cwd(), 'vscode-logs');
+    launchArgs.push('--crash-reporter-directory', logDir);
+    console.log(launchArgs);
     await runTests({
       version: _version,
       extensionDevelopmentPath: _extensionDevelopmentPath,
