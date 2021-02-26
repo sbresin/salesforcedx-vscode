@@ -347,7 +347,9 @@ jobs:
       - run:
           name: 'Running integration tests'
           shell: cmd.exe
-          command: npm run test:integration-tests-without-system-tests
+          command: |
+            set -e
+            npm run test:integration-tests-without-system-tests
       - run:
           name: 'Aggregate test results'
           shell: bash.exe

@@ -4,6 +4,8 @@ const path = require('path');
 const { runIntegrationTests } = require('./vscode-integration-testrunner');
 const { runWithRetry } = require('./verify-test-results');
 
+const cwd = process.cwd();
+
 runWithRetry(() =>
   runIntegrationTests({
     extensionDevelopmentPath: cwd,
