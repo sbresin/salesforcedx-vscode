@@ -32,7 +32,7 @@ async function runIntegrationTests({
     const launchArgs = _testWorkspace && [_testWorkspace];
     const logDir = join(process.cwd(), 'vscode-logs');
     launchArgs.push('--crash-reporter-directory', logDir);
-    console.log(launchArgs);
+
     await runTests({
       version: _version,
       extensionDevelopmentPath: _extensionDevelopmentPath,
