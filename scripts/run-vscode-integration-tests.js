@@ -2,7 +2,7 @@
 
 const path = require('path');
 const { runIntegrationTests } = require('./vscode-integration-testrunner');
-const { runWithRetry } = require('./verify-test-results');
+const { runWithRetry } = require('./test-suite-verification');
 
 const cwd = process.cwd();
 

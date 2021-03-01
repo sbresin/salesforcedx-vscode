@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 const path = require('path');
-const { runWithRetry } = require('./verify-test-results');
+const { runWithRetry } = require('./test-suite-verification');
 const { runIntegrationTests } = require('./vscode-integration-testrunner');
 
 const cwd = process.cwd();
