@@ -50,3 +50,7 @@ node_modules/sfdx-faye/spec/**
 
 # ignore unused dayjs code
 node_modules/dayjs/esm/**
+
+# ignore unused types shipped by @salesforce/core
+node_modules/@types/jsforce
+node_modules/@types/graceful-js
