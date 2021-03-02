@@ -12,7 +12,6 @@ import {
   CommandOutput,
   SfdxCommandBuilder
 } from '@salesforce/salesforcedx-utils-vscode/out/src/cli';
-
 import {
   CancelResponse,
   ContinueResponse,
@@ -22,7 +21,7 @@ import * as AdmZip from 'adm-zip';
 import { SpawnOptions } from 'child_process';
 import * as fs from 'fs';
 import * as path from 'path';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import sanitizeFilename = require('sanitize-filename');
 import * as shell from 'shelljs';
 import { URL } from 'url';

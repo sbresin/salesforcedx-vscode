@@ -8,11 +8,7 @@
 import { ChildProcess, SpawnOptions } from 'child_process';
 import * as cross_spawn from 'cross-spawn';
 import * as os from 'os';
-import 'rxjs/add/observable/fromEvent';
-import 'rxjs/add/observable/interval';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import { Subscription } from 'rxjs/Subscription';
+import { fromEvent, interval, Observable, Subject, Subscription } from 'rxjs';
 
 // tslint:disable-next-line:no-var-requires
 const kill = require('tree-kill');
@@ -143,7 +139,7 @@ export class CompositeCliCommandExecution implements CommandExecution {
 
     let timerSubscriber: Subscription | null;
     if (cancellationToken) {
-      const timer = Observable.interval(1000);
+      const timer = interval(1000);
       timerSubscriber = timer.subscribe(async next => {
         if (cancellationToken.isCancellationRequested) {
           try {
@@ -201,19 +197,17 @@ export class CliCommandExecution implements CommandExecution {
     let timerSubscriber: Subscription | null;
 
     // Process
-    this.processExitSubject = Observable.fromEvent(
-      childProcess,
-      'exit'
-    ) as Observable<number | undefined>;
+    this.processExitSubject = fromEvent(childProcess, 'exit') as Observable<
+      number | undefined
+    >;
     this.processExitSubject.subscribe(next => {
       if (timerSubscriber) {
         timerSubscriber.unsubscribe();
       }
     });
-    this.processErrorSubject = Observable.fromEvent(
-      childProcess,
-      'error'
-    ) as Observable<Error | undefined>;
+    this.processErrorSubject = fromEvent(childProcess, 'error') as Observable<
+      Error | undefined
+    >;
     this.processErrorSubject.subscribe(next => {
       if (timerSubscriber) {
         timerSubscriber.unsubscribe();
@@ -221,12 +215,12 @@ export class CliCommandExecution implements CommandExecution {
     });
 
     // Output
-    this.stdoutSubject = Observable.fromEvent(childProcess.stdout!, 'data');
-    this.stderrSubject = Observable.fromEvent(childProcess.stderr!, 'data');
+    this.stdoutSubject = fromEvent(childProcess.stdout!, 'data');
+    this.stderrSubject = fromEvent(childProcess.stderr!, 'data');
 
     // Cancellation watcher
     if (cancellationToken) {
-      const timer = Observable.interval(1000);
+      const timer = interval(1000);
       timerSubscriber = timer.subscribe(async next => {
         if (cancellationToken.isCancellationRequested) {
           try {

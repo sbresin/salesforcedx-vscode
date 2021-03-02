@@ -12,10 +12,9 @@ import {
   CommandExecution
 } from '@salesforce/salesforcedx-utils-vscode/out/src/cli';
 import { expect } from 'chai';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import * as sinon from 'sinon';
 import { SinonSandbox, SinonStub } from 'sinon';
-import * as vscode from 'vscode';
 import { DEV_SERVER_DEFAULT_BASE_URL } from '../../../src/commands/commandConstants';
 import * as commandUtils from '../../../src/commands/commandUtils';
 import {

@@ -7,7 +7,7 @@
 
 import { expect } from 'chai';
 import * as proxyquire from 'proxyquire';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import { assert, match, SinonStub, spy, stub } from 'sinon';
 import {
   CliCommandExecutor,

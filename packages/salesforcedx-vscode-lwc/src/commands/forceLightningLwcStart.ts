@@ -21,7 +21,7 @@ import {
   ProgressNotification
 } from '@salesforce/salesforcedx-utils-vscode/out/src/commands';
 import { ContinueResponse } from '@salesforce/salesforcedx-utils-vscode/out/src/types';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 import * as vscode from 'vscode';
 import { channelService } from '../channel';
 import { nls } from '../messages';

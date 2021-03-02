@@ -11,7 +11,7 @@ import {
   DirFileNameSelection
 } from '@salesforce/salesforcedx-utils-vscode/out/src/types';
 import * as path from 'path';
-import { Observable } from 'rxjs/Observable';
+import { Observable } from 'rxjs';
 import * as vscode from 'vscode';
 import { channelService } from '../../channels';
 import { notificationService, ProgressNotification } from '../../notifications';
@@ -30,7 +30,7 @@ import {
 
 export abstract class BaseTemplateCommand extends SfdxCommandletExecutor<
   DirFileNameSelection
-  > {
+> {
   private metadataType: MetadataInfo;
 
   constructor(type: string) {
@@ -56,10 +56,11 @@ export abstract class BaseTemplateCommand extends SfdxCommandletExecutor<
         dirType: this.identifyDirType(response.data.outputdir)
       });
       if (data !== undefined && String(data) === '0' && hasRootWorkspace()) {
-        const outputFile = this.getPathToSource(response.data.outputdir, response.data.fileName);
-        const document = await vscode.workspace.openTextDocument(
-          outputFile
+        const outputFile = this.getPathToSource(
+          response.data.outputdir,
+          response.data.fileName
         );
+        const document = await vscode.workspace.openTextDocument(outputFile);
         vscode.window.showTextDocument(document);
         this.runPostCommandTasks(path.dirname(outputFile));
       }

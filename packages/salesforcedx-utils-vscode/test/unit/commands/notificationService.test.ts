@@ -6,7 +6,7 @@
  */
 
 import * as proxyquire from 'proxyquire';
-import { ReplaySubject } from 'rxjs/ReplaySubject';
+import { ReplaySubject } from 'rxjs';
 import { assert, SinonStub, stub } from 'sinon';
 import { nls } from '../../../src/messages';
 import { vscodeStub } from './mocks';

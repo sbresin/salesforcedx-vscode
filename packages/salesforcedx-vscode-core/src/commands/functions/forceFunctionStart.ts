@@ -10,9 +10,8 @@ import {
   SfdxCommandBuilder
 } from '@salesforce/salesforcedx-utils-vscode/out/src/cli';
 import { ContinueResponse } from '@salesforce/salesforcedx-utils-vscode/out/src/types';
-import { Observable } from 'rxjs/Observable';
-import { Subject } from 'rxjs/Subject';
-import * as vscode from 'vscode';
+import { Observable, Subject } from 'rxjs';
+import { CancellationTokenSource, ProgressLocation, Uri, window } from 'vscode';
 import { channelService } from '../../channels';
 import { nls } from '../../messages';
 import { notificationService, ProgressNotification } from '../../notifications';
@@ -25,8 +24,6 @@ import {
   SfdxCommandletExecutor,
   SfdxWorkspaceChecker
 } from '../util';
-
-import { Uri, window } from 'vscode';
 import { FunctionService } from './functionService';
 import {
   FUNCTION_DEFAULT_DEBUG_PORT,
@@ -77,7 +74,7 @@ export class ForceFunctionStartExecutor extends SfdxCommandletExecutor<string> {
 
   public execute(response: ContinueResponse<string>) {
     const startTime = process.hrtime();
-    const cancellationTokenSource = new vscode.CancellationTokenSource();
+    const cancellationTokenSource = new CancellationTokenSource();
     const cancellationToken = cancellationTokenSource.token;
     const sourceFsPath = response.data;
     const functionDirPath = FunctionService.getFunctionDir(sourceFsPath);
@@ -134,7 +131,7 @@ export class ForceFunctionStartExecutor extends SfdxCommandletExecutor<string> {
     ProgressNotification.show(
       execution,
       cancellationTokenSource,
-      vscode.ProgressLocation.Notification,
+      ProgressLocation.Notification,
       progress.asObservable() as Observable<number>
     );
     const task = taskViewService.addCommandExecution(
