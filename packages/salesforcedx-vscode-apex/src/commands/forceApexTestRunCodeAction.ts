@@ -76,27 +76,71 @@ export class ApexLibraryTestRunExecutor extends LibraryCommandletExecutor<{}> {
     return tItems;
   }
 
-  public async run(): Promise<boolean> {
-    const connection = await workspaceContext.getConnection();
-    const testService = new TestService(connection);
-    const payload = await testService.buildAsyncPayload(
-      TestLevel.RunSpecifiedTests,
-      this.tests.join()
-    );
-    const result = await testService.runTestAsynchronous(
-      payload,
-      this.codeCoverage
-    );
-    await testService.writeResultFiles(
-      result,
-      { resultFormat: 'json', dirPath: this.outputDir },
-      this.codeCoverage
-    );
-    const humanOutput = new HumanReporter().format(result, this.codeCoverage);
-    channelService.appendLine(humanOutput);
+  public async run(
+    response?: any,
+    progress?: vscode.Progress<{
+      message?: string | undefined;
+      increment?: number | undefined;
+    }>,
+    token?: vscode.CancellationToken
+  ): Promise<boolean> {
+    return new Promise(async (resolve, reject) => {
+      // TODO: should move this to execute
+      token?.onCancellationRequested(() => {
+        reject('user cancelled');
+      });
 
-    await this.handleDiagnostics(result);
-    return result.summary.outcome === 'Passed';
+      const connection = await workspaceContext.getConnection();
+      const testService = new TestService(connection);
+
+      // Check if cancelled
+      progress?.report({
+        message: 'Building Async Payload'
+      });
+      if (token?.isCancellationRequested) {
+        return;
+      }
+
+      const payload = await testService.buildAsyncPayload(
+        TestLevel.RunSpecifiedTests,
+        this.tests.join()
+      );
+
+      // Check if cancelled
+      progress?.report({
+        message: 'Running tests async'
+      });
+      if (token?.isCancellationRequested) {
+        return;
+      }
+
+      // Check if cancelled
+      const result = await testService.runTestAsynchronous(
+        payload,
+        this.codeCoverage
+      );
+
+      progress?.report({
+        message: 'Writing Result files'
+      });
+      if (token?.isCancellationRequested) {
+        return;
+      }
+
+      await testService.writeResultFiles(
+        result,
+        {
+          resultFormat: 'json',
+          dirPath: this.outputDir
+        },
+        this.codeCoverage
+      );
+      const humanOutput = new HumanReporter().format(result, this.codeCoverage);
+      channelService.appendLine(humanOutput);
+
+      await this.handleDiagnostics(result);
+      resolve(result.summary.outcome === 'Passed');
+    });
   }
 
   private async handleDiagnostics(result: TestResult) {

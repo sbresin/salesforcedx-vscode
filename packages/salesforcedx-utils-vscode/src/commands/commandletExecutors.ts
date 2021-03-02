@@ -143,10 +143,19 @@ export abstract class LibraryCommandletExecutor<T>
    * @param response Data from the parameter gathering step.
    * @returns Whether or not the execution was a success
    */
-  public abstract run(response: ContinueResponse<T>): Promise<boolean>;
+  public abstract run(
+    response: ContinueResponse<T>,
+    progress?: vscode.Progress<{
+      message?: string | undefined;
+      increment?: number | undefined;
+    }>,
+    token?: vscode.CancellationToken
+  ): Promise<boolean>;
 
   public async execute(response: ContinueResponse<T>): Promise<void> {
     const startTime = process.hrtime();
+    const cancellationTokenSource = new vscode.CancellationTokenSource();
+    const cancellationToken = cancellationTokenSource.token;
     const channelService = new ChannelService(this.outputChannel);
     const telemetryService = TelemetryService.getInstance();
 
@@ -155,12 +164,24 @@ export abstract class LibraryCommandletExecutor<T>
     );
 
     try {
+      // ProgressNotification.show()
       const success = await vscode.window.withProgress(
         {
           title: nls.localize('progress_notification_text', this.executionName),
-          location: vscode.ProgressLocation.Notification
+          location: vscode.ProgressLocation.Notification,
+          cancellable: true
         },
-        () => this.run(response)
+        (progress, token) => {
+          return this.run(response, progress, token);
+          // return new Promise((resolve, reject) => {
+          //   token.onCancellationRequested(() => {
+          //     // token.cancel();
+          //     // cancellationTokenSource.cancel();
+          //     return resolve(null);
+          //   });
+          //   return this.run(response);
+          // });
+        }
       );
       channelService.showCommandWithTimestamp(
         `${nls.localize('channel_end')} ${this.executionName}`
