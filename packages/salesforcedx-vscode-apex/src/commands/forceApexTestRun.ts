@@ -11,6 +11,7 @@ import {
   TestLevel,
   TestService
 } from '@salesforce/apex-node';
+import { ResultFormat } from '@salesforce/apex-node/lib/src/tests/types';
 import {
   getRootWorkspacePath,
   hasRootWorkspace,
@@ -206,10 +207,19 @@ export class ApexLibraryTestRunExecutor extends LibraryCommandletExecutor<
 
     switch (response.data.type) {
       case TestType.Class:
-        payload = await testService.buildAsyncPayload(testLevel, undefined, response.data.label);
+        payload = await testService.buildAsyncPayload(
+          testLevel,
+          undefined,
+          response.data.label
+        );
         break;
       case TestType.Suite:
-        payload = await testService.buildAsyncPayload(testLevel, undefined, undefined, response.data.label);
+        payload = await testService.buildAsyncPayload(
+          testLevel,
+          undefined,
+          undefined,
+          response.data.label
+        );
         break;
       default:
         payload = { testLevel: TestLevel.RunAllTestsInOrg };
@@ -218,7 +228,7 @@ export class ApexLibraryTestRunExecutor extends LibraryCommandletExecutor<
     const result = await testService.runTestAsynchronous(payload, codeCoverage);
     await testService.writeResultFiles(
       result,
-      { resultFormat: 'json', dirPath: getTempFolder() },
+      { resultFormats: [ResultFormat.json], dirPath: getTempFolder() },
       codeCoverage
     );
     const humanOutput = new HumanReporter().format(result, codeCoverage);

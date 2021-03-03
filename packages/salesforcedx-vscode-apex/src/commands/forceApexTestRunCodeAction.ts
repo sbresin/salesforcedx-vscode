@@ -11,6 +11,7 @@ import {
   TestResult,
   TestService
 } from '@salesforce/apex-node';
+import { ResultFormat } from '@salesforce/apex-node/lib/src/tests/types';
 import { SfdxProject } from '@salesforce/core';
 import { getRootWorkspacePath } from '@salesforce/salesforcedx-utils-vscode/out/src';
 import {
@@ -117,7 +118,15 @@ export class ApexLibraryTestRunExecutor extends LibraryCommandletExecutor<{}> {
       // Check if cancelled
       const result = await testService.runTestAsynchronous(
         payload,
-        this.codeCoverage
+        this.codeCoverage,
+        {
+          report: value => {
+            progress?.report({
+              message: value.toString()
+            });
+          }
+        },
+        token
       );
 
       progress?.report({
@@ -130,7 +139,7 @@ export class ApexLibraryTestRunExecutor extends LibraryCommandletExecutor<{}> {
       await testService.writeResultFiles(
         result,
         {
-          resultFormat: 'json',
+          resultFormats: [ResultFormat.json],
           dirPath: this.outputDir
         },
         this.codeCoverage
