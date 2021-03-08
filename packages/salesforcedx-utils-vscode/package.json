@@ -45,7 +45,7 @@
     "vscode": "^1.49.3"
   },
   "scripts": {
-    "compile": "tsc -p ./ && webpack",
+    "compile": "tsc -p ./",
     "lint": "tslint --project .",
     "watch": "tsc -watch -p .",
     "clean": "shx rm -rf node_modules && shx rm -rf out && shx rm -rf coverage && shx rm -rf .nyc_output",
