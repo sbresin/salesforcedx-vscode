@@ -326,7 +326,7 @@
         "path": "./node_modules/@salesforce/apex-tmlanguage/grammars/apex.tmLanguage"
       }
     ],
-    "snippets": [
+    "XXXsnippets": [
       {
         "language": "apex",
         "path": "./snippets/apex.json"
