@@ -19,37 +19,26 @@ import { SObjectShortDescription } from '../src/describe';
 import { OrgObjectDetailRetriever } from '../src/retriever';
 import { SObject } from '../src/types';
 
-import { AuthInfo, Connection } from '@salesforce/core';
+import { Connection, Org } from '@salesforce/core';
 
 // tslint:disable-next-line:no-floating-promises
 (async () => {
   const args = process.argv.slice(2);
 
-  if (args.length <= 1) {
+  if (args.length <= 0) {
     console.log(
-      'Usage:\n ./scripts/' +
-        path.basename(__filename) +
-        ' <auth_token> <instance_url>'
+      'Usage:\n ./scripts/' + path.basename(__filename) + ' <aliasOrUsername>'
     );
     process.exit(1);
   }
-  const token = args[0];
-  const instanceUrl = args[1];
-
-  const connection = await createConnection(token, instanceUrl);
+  const aliasOrUsername = args[0];
+  const connection = await createConnection(aliasOrUsername);
 
   await generateLocalSobjectJSON(connection);
 })();
 
-async function createConnection(token: string, instanceUrl: string) {
-  return await Connection.create({
-    authInfo: await AuthInfo.create({
-      accessTokenOptions: {
-        accessToken: token,
-        instanceUrl
-      }
-    })
-  });
+async function createConnection(aliasOrUsername: string) {
+  return (await Org.create({ aliasOrUsername })).getConnection();
 }
 
 async function generateLocalSobjectJSON(connection: Connection) {
