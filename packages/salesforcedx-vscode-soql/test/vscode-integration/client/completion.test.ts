@@ -73,7 +73,7 @@ describe('Should do completion', async () => {
     const workspaceDir = path.normalize(
       __dirname + '/../../../../../system-tests/assets/sfdx-simple/.sfdx'
     );
-    const targetDir = workspaceDir + '/tools/soqlMetadata/';
+    const targetDir = path.join(workspaceDir, 'tools', 'soqlMetadata');
     const soqlMetadataDir = path.normalize(
       __dirname + '/../../../../test/vscode-integration/soqlMetadata/'
     );
@@ -86,6 +86,7 @@ describe('Should do completion', async () => {
     console.log('Copying ' + soqlMetadataDir + ' to ' + targetDir);
     fsExtra.copySync(soqlMetadataDir, targetDir);
     const files = fsExtra.readdirSync(targetDir);
+    console.log('Copied ' + files.length + ' files');
   });
 
   beforeEach(async () => {

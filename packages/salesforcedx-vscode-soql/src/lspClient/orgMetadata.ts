@@ -9,37 +9,21 @@ import { DescribeSObjectResult, Field } from 'jsforce';
 
 import { getRootWorkspaceSfdxPath } from '@salesforce/salesforcedx-utils-vscode/out/src';
 import { retrieveSObject, retrieveSObjects, channelService } from '../sfdx';
+import {
+  SObject,
+  SObjectField
+} from '@salesforce/salesforcedx-sobjects-faux-generator/out/src/types';
+import { toMinimalSObject } from '@salesforce/salesforcedx-sobjects-faux-generator/out/src/describe';
 import { nls } from '../messages';
 import * as fs from 'fs';
 import * as path from 'path';
 
+export { SObject, SObjectField };
+
 export interface OrgDataSource {
   retrieveSObjectsList(): Promise<string[]>;
-  retrieveSObject(sobjectName: string): Promise<MinSObjectMeta | undefined>;
+  retrieveSObject(sobjectName: string): Promise<SObject | undefined>;
 }
-
-export type MinFieldMeta = Pick<
-  Field,
-  | 'aggregatable'
-  | 'defaultValue'
-  | 'filterable'
-  | 'groupable'
-  | 'label'
-  | 'name'
-  | 'nillable'
-  | 'picklistValues'
-  | 'relationshipName'
-  | 'referenceTo'
-  | 'sortable'
-  | 'type'
->;
-
-export type MinSObjectMeta = Pick<
-  DescribeSObjectResult,
-  'childRelationships' | 'label' | 'custom' | 'name' | 'queryable'
-> & {
-  fields: MinFieldMeta[];
-};
 
 export class FileSystemOrgDataSource implements OrgDataSource {
   private getLocalDatapath(): string | undefined {
@@ -75,7 +59,7 @@ export class FileSystemOrgDataSource implements OrgDataSource {
 
   public async retrieveSObject(
     sobjectName: string
-  ): Promise<MinSObjectMeta | undefined> {
+  ): Promise<SObject | undefined> {
     const soqlMetadataPath = this.getLocalDatapath();
     if (!soqlMetadataPath) {
       return undefined;
@@ -108,9 +92,7 @@ export class JsforceOrgDataSource implements OrgDataSource {
     }
   }
 
-  async retrieveSObject(
-    sobjectName: string
-  ): Promise<MinSObjectMeta | undefined> {
+  async retrieveSObject(sobjectName: string): Promise<SObject | undefined> {
     try {
       return toMinimalSObject(await retrieveSObject(sobjectName));
     } catch (metadataError) {
@@ -121,70 +103,5 @@ export class JsforceOrgDataSource implements OrgDataSource {
       channelService.appendLine(message);
       return undefined;
     }
-  }
-}
-
-function toMinimalSObject(
-  describeSObject: DescribeSObjectResult
-): MinSObjectMeta {
-  return {
-    fields: describeSObject.fields.map(toMinimalSObjectField),
-    childRelationships: (describeSObject.childRelationships || []).filter(
-      r => r.relationshipName !== null
-    ),
-    ...pick(describeSObject, 'label', 'custom', 'name', 'queryable')
-  };
-}
-
-function toMinimalSObjectField(describeField: Field): MinFieldMeta {
-  return pick(
-    describeField,
-    'label',
-    'name',
-    'aggregatable',
-    'defaultValue',
-    'filterable',
-    'groupable',
-    'nillable',
-    'picklistValues',
-    'relationshipName',
-    'referenceTo',
-    'sortable',
-    'type'
-  );
-}
-
-function pick<T, K extends keyof T>(obj: T, ...keys: K[]): Pick<T, K> {
-  const ret: any = {};
-  keys.forEach(key => {
-    ret[key] = obj[key];
-  });
-  return ret;
-}
-
-export async function generateLocalSobjectJSON() {
-  const sobjectNames = [
-    'Account',
-    'Attachment',
-    'Case',
-    'Contact',
-    'Contract',
-    'Lead',
-    'Note',
-    'Opportunity',
-    'Order',
-    'Pricebook2',
-    'PricebookEntry',
-    'Product2',
-    'RecordType',
-    'Report',
-    'Task',
-    'User'
-  ];
-
-  for (const sobjectName of sobjectNames) {
-    const localPath = path.join('/tmp', 'soqlMetadata', sobjectName + '.json');
-    const sobject = await retrieveSObject(sobjectName);
-    fs.writeFileSync(localPath, JSON.stringify(toMinimalSObject(sobject)));
   }
 }

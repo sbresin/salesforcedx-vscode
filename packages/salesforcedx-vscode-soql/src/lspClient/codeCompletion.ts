@@ -16,8 +16,8 @@ import { telemetryService } from '../telemetry';
 import {
   FileSystemOrgDataSource,
   JsforceOrgDataSource,
-  MinFieldMeta,
-  MinSObjectMeta,
+  SObjectField,
+  SObject,
   OrgDataSource
 } from './orgMetadata';
 import { Org } from '@salesforce/core';
@@ -272,7 +272,7 @@ const expandFunctions: {
 async function safeRetrieveSObject(
   dataSource: OrgDataSource,
   sobjectName?: string
-): Promise<MinSObjectMeta | undefined> {
+): Promise<SObject | undefined> {
   if (!sobjectName) {
     telemetryService.sendException(
       'SOQLanguageServerException',
@@ -284,7 +284,7 @@ async function safeRetrieveSObject(
 }
 
 function objectFieldMatchesSOQLContext(
-  field: MinFieldMeta,
+  field: SObjectField,
   soqlContext: SoqlItemContext
 ) {
   return (
@@ -318,7 +318,7 @@ function newCompletionItem(
 }
 
 function newFieldCompletionItems(
-  field: MinFieldMeta,
+  field: SObjectField,
   soqlContext: SoqlItemContext
 ): ProtocolCompletionItem[] {
   const fieldItems = [];
