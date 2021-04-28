@@ -137,7 +137,9 @@ export class SObjectDescribe {
  * @param describeSObject full metadata of an sobject, as returned by the jsforce's sobject/describe api
  * @returns SObject containing a subset of DescribeSObjectResult information
  */
-function toMinimalSObject(describeSObject: DescribeSObjectResult): SObject {
+export function toMinimalSObject(
+  describeSObject: DescribeSObjectResult
+): SObject {
   return {
     fields: describeSObject.fields
       ? describeSObject.fields.map(toMinimalSObjectField)
