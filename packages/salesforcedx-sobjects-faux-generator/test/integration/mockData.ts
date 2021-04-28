@@ -126,6 +126,7 @@ export const mockMinimizedResponseResult: SObject = {
   fields: [
     {
       aggregatable: true,
+      custom: false,
       defaultValue: null,
       extraTypeInfo: null,
       filterable: true,

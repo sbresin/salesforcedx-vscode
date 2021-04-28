@@ -11,6 +11,7 @@ export { ChildRelationship };
 export type SObjectField = Pick<
   Field,
   | 'aggregatable'
+  | 'custom'
   | 'defaultValue'
   | 'extraTypeInfo'
   | 'filterable'

@@ -78,7 +78,7 @@ async function generateLocalSobjectJSON(connection: Connection) {
     targetFileName,
     JSON.stringify({
       typeNames: output.getTypeNames(),
-      standard: output.getStandard()
+      standard: output.getStandard().map(removeCustomFields)
     })
   );
 }
@@ -114,4 +114,9 @@ function initializeOutput(sobjectNames: string[]) {
       result.error = { message, stack };
     }
   };
+}
+
+function removeCustomFields(sobject: SObject) {
+  sobject.fields = sobject.fields.filter(f => !f.custom);
+  return sobject;
 }

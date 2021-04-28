@@ -159,6 +159,7 @@ function toMinimalSObjectField(describeField: Field): SObjectField {
   return pick(
     describeField,
     'aggregatable',
+    'custom',
     'defaultValue',
     'extraTypeInfo',
     'filterable',

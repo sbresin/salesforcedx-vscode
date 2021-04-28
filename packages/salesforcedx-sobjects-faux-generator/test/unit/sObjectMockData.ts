@@ -971,6 +971,7 @@ export const minimalCustomSObject: SObject = {
   fields: [
     {
       aggregatable: true,
+      custom: false,
       extraTypeInfo: null,
       filterable: true,
       groupable: true,
@@ -986,6 +987,7 @@ export const minimalCustomSObject: SObject = {
     },
     {
       aggregatable: true,
+      custom: false,
       extraTypeInfo: null,
       filterable: true,
       groupable: true,
@@ -1001,6 +1003,7 @@ export const minimalCustomSObject: SObject = {
     },
     {
       aggregatable: false,
+      custom: false,
       extraTypeInfo: null,
       filterable: true,
       groupable: true,
@@ -1016,6 +1019,7 @@ export const minimalCustomSObject: SObject = {
     },
     {
       aggregatable: true,
+      custom: false,
       extraTypeInfo: null,
       filterable: true,
       groupable: false,
@@ -1031,6 +1035,7 @@ export const minimalCustomSObject: SObject = {
     },
     {
       aggregatable: true,
+      custom: false,
       extraTypeInfo: null,
       filterable: true,
       groupable: false,
@@ -1046,6 +1051,7 @@ export const minimalCustomSObject: SObject = {
     },
     {
       aggregatable: true,
+      custom: false,
       extraTypeInfo: null,
       filterable: true,
       groupable: true,
@@ -1061,6 +1067,7 @@ export const minimalCustomSObject: SObject = {
     },
     {
       aggregatable: true,
+      custom: false,
       extraTypeInfo: null,
       filterable: true,
       groupable: false,
@@ -1076,6 +1083,7 @@ export const minimalCustomSObject: SObject = {
     },
     {
       aggregatable: true,
+      custom: false,
       extraTypeInfo: null,
       filterable: true,
       groupable: true,
@@ -1091,6 +1099,7 @@ export const minimalCustomSObject: SObject = {
     },
     {
       aggregatable: true,
+      custom: false,
       extraTypeInfo: null,
       filterable: true,
       groupable: false,
@@ -1106,6 +1115,7 @@ export const minimalCustomSObject: SObject = {
     },
     {
       aggregatable: true,
+      custom: false,
       extraTypeInfo: null,
       filterable: true,
       groupable: true,
@@ -1121,6 +1131,7 @@ export const minimalCustomSObject: SObject = {
     },
     {
       aggregatable: true,
+      custom: false,
       extraTypeInfo: null,
       filterable: true,
       groupable: false,
@@ -1136,6 +1147,7 @@ export const minimalCustomSObject: SObject = {
     },
     {
       aggregatable: true,
+      custom: false,
       extraTypeInfo: null,
       filterable: true,
       groupable: false,
@@ -1151,6 +1163,7 @@ export const minimalCustomSObject: SObject = {
     },
     {
       aggregatable: true,
+      custom: true,
       extraTypeInfo: null,
       filterable: true,
       groupable: true,
@@ -1166,6 +1179,7 @@ export const minimalCustomSObject: SObject = {
     },
     {
       aggregatable: true,
+      custom: true,
       extraTypeInfo: null,
       filterable: true,
       groupable: true,
@@ -1182,6 +1196,7 @@ export const minimalCustomSObject: SObject = {
     },
     {
       aggregatable: true,
+      custom: true,
       extraTypeInfo: null,
       filterable: true,
       groupable: true,
