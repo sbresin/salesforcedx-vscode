@@ -84,7 +84,7 @@ describe('Should do completion', async () => {
     }
     fsExtra.mkdirSync(targetDir, { recursive: true });
     console.log('Copying ' + soqlMetadataDir + ' to ' + targetDir);
-    fsExtra.copySync(soqlMetadataDir, targetDir);
+    fsExtra.copySync(soqlMetadataDir, targetDir, { recursive: true });
     const files = fsExtra.readdirSync(targetDir);
     console.log('Copied ' + files.length + ' files');
   });
@@ -502,7 +502,7 @@ describe('Should not do completion on metadata errors', async () => {
         'ERROR: We can’t retrieve the fields for Account. ' +
         'Expected metadata file at: ' +
         soqlMetadataDir +
-        '/Account.json.'
+        '/*/Account.json.'
     }
   );
 });
