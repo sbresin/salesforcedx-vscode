@@ -10,6 +10,7 @@ import * as path from 'path';
 import * as fsExtra from 'fs-extra';
 import * as sinon from 'sinon';
 import * as vscode from 'vscode';
+
 import { CompletionItem, CompletionItemKind } from 'vscode';
 import { extensions, Position, Uri, workspace, commands } from 'vscode';
 import {
@@ -427,7 +428,7 @@ describe('Should not do completion on metadata errors', async () => {
   const workspaceDir = path.normalize(
     __dirname + '/../../../../../system-tests/assets/sfdx-simple/.sfdx'
   );
-  const soqlMetadataDir = workspaceDir + '/tools/soqlMetadata';
+  const soqlMetadataDir = path.join(workspaceDir, 'tools', 'soqlMetadata');
 
   before(() => {
     if (fsExtra.existsSync(soqlMetadataDir)) {
@@ -501,8 +502,8 @@ describe('Should not do completion on metadata errors', async () => {
       expectChannelMsg:
         'ERROR: We can’t retrieve the fields for Account. ' +
         'Expected metadata file at: ' +
-        soqlMetadataDir +
-        '/*/Account.json.'
+        path.join(soqlMetadataDir, '*', 'Account.json.')
+      // [soqlMetadataDir, '*', 'Account.json.'].join(path.sep)
     }
   );
 });
