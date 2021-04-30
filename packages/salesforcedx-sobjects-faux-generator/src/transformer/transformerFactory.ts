@@ -79,7 +79,7 @@ export class SObjectTransformerFactory {
     // TODO Enable as part of W-8912293
     // generators.push(new TypingGenerator());
 
-    generators.push(new SOQLMetadataGenerator());
+    generators.push(new SOQLMetadataGenerator(category));
 
     return new SObjectTransformer(
       emitter,

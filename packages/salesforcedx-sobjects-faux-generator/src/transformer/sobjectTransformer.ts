@@ -134,6 +134,7 @@ export class SObjectTransformer {
       },
 
       sfdxPath: path.join(projectPath, SFDX_DIR),
+
       typeNames: [],
       custom: [],
       standard: []

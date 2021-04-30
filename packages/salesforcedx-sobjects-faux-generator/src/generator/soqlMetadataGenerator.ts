@@ -7,21 +7,33 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import { mkdir, rm } from 'shelljs';
-import { SOQLMETADATA_DIR, TOOLS_DIR } from '../constants';
+import {
+  CUSTOMOBJECTS_DIR,
+  SOQLMETADATA_DIR,
+  STANDARDOBJECTS_DIR,
+  TOOLS_DIR
+} from '../constants';
 import { SObjectShortDescription } from '../describe';
 import { nls } from '../messages';
-import { SObject, SObjectGenerator, SObjectRefreshOutput } from '../types';
+import {
+  SObject,
+  SObjectCategory,
+  SObjectGenerator,
+  SObjectRefreshOutput
+} from '../types';
 
-const REL_BASE_FOLDER = [TOOLS_DIR, SOQLMETADATA_DIR];
+const BASE_FOLDER = [TOOLS_DIR, SOQLMETADATA_DIR];
 
 export class SOQLMetadataGenerator implements SObjectGenerator {
-  public constructor() {}
+  public constructor(private category: SObjectCategory) {}
 
   public generate(output: SObjectRefreshOutput): void {
-    const outputFolderPath = path.join(output.sfdxPath, ...REL_BASE_FOLDER);
-    if (!this.resetOutputFolder(outputFolderPath)) {
+    const outputFolderPath = path.join(output.sfdxPath, ...BASE_FOLDER);
+    if (!this.resetOutputFolder(outputFolderPath, this.category)) {
       throw nls.localize('no_sobject_output_folder_text', outputFolderPath);
     }
+
+    this.generateTypesNames(outputFolderPath, output.getTypeNames());
 
     const sobjects = [...output.getStandard(), ...output.getCustom()];
 
@@ -32,6 +44,22 @@ export class SOQLMetadataGenerator implements SObjectGenerator {
     }
   }
 
+  private generateTypesNames(
+    folderPath: string,
+    typeNames: SObjectShortDescription[]
+  ): void {
+    if (!fs.existsSync(folderPath)) {
+      fs.mkdirSync(folderPath, { recursive: true });
+    }
+    const typeNameFile = path.join(folderPath, 'typeNames.json');
+    if (fs.existsSync(typeNameFile)) {
+      fs.unlinkSync(typeNameFile);
+    }
+    fs.writeFileSync(typeNameFile, JSON.stringify(typeNames, null, 2), {
+      mode: 0o444
+    });
+  }
+
   private generateMetadataForSObject(
     folderPath: string,
     sobject: SObject
@@ -39,19 +67,42 @@ export class SOQLMetadataGenerator implements SObjectGenerator {
     if (!fs.existsSync(folderPath)) {
       fs.mkdirSync(folderPath);
     }
-    const targetPath = path.join(folderPath, `${sobject.name}.json`);
+    const targetPath = path.join(
+      folderPath,
+      sobject.custom ? CUSTOMOBJECTS_DIR : STANDARDOBJECTS_DIR,
+      `${sobject.name}.json`
+    );
+
     fs.writeFileSync(targetPath, JSON.stringify(sobject, null, 2), {
       mode: 0o444
     });
   }
 
-  private resetOutputFolder(pathToClean: string): boolean {
-    if (fs.existsSync(pathToClean)) {
-      rm('-rf', pathToClean);
+  private async resetOutputFolder(
+    outputFolder: string,
+    category: SObjectCategory
+  ): Promise<boolean> {
+    const customsFolder = path.join(outputFolder, CUSTOMOBJECTS_DIR);
+    const standardsFolder = path.join(outputFolder, STANDARDOBJECTS_DIR);
+
+    if (
+      [SObjectCategory.ALL, SObjectCategory.STANDARD].includes(category) &&
+      fs.existsSync(standardsFolder)
+    ) {
+      rm('-rf', standardsFolder);
     }
-    if (!fs.existsSync(pathToClean)) {
-      mkdir('-p', pathToClean);
-      return fs.existsSync(pathToClean);
+    if (
+      [SObjectCategory.ALL, SObjectCategory.CUSTOM].includes(category) &&
+      fs.existsSync(customsFolder)
+    ) {
+      rm('-rf', customsFolder);
+    }
+
+    if (!fs.existsSync(customsFolder)) {
+      mkdir('-p', customsFolder);
+    }
+    if (!fs.existsSync(standardsFolder)) {
+      mkdir('-p', standardsFolder);
     }
     return true;
   }
