@@ -46,6 +46,8 @@ downloadAndUnzipVSCode(vscodeVersion)
     logger.debug('Base Path: ' + vscodeBasePath);
     logger.debug('Full Path: ' + vscodeFullPath);
 
+    // Test add
+
     // If this script is run from an individual package, don't copy it around unnecessarily
     // Example:
     // ~/salesforcedx-vscode/packages/salesforcedx-vscode-lwc> npm run test:vscode-integration
@@ -67,7 +69,7 @@ downloadAndUnzipVSCode(vscodeVersion)
             fs.mkdirSync(copyDestination, { recursive: true });
           }
           logger.debug(`Copying to: ${copyDestination}`);
-          ncp(vscodeFullPath, copyDestination, function(err) {
+          ncp(vscodeFullPath, copyDestination, function (err) {
             if (err) {
               return console.error(err);
             }
