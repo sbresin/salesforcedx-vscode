@@ -4,6 +4,8 @@
  * Licensed under the BSD 3-Clause license.
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
+
+// My small menial change.
 import {
   getRelativeProjectPath,
   getRootWorkspacePath,
@@ -42,7 +44,7 @@ type DeployRetrieveOperation = MetadataApiDeploy | MetadataApiRetrieve;
 
 export abstract class DeployRetrieveExecutor<
   T
-> extends LibraryCommandletExecutor<T> {
+  > extends LibraryCommandletExecutor<T> {
   protected cancellable: boolean = true;
 
   constructor(executionName: string, logName: string) {
