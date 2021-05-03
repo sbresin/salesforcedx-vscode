@@ -41,6 +41,8 @@ To create a release branch manually:
    1. Click the selection for `hold`.
    1. Click the `Approve` button. See ![Approval View](./images/contributing-approval-button.png) for an example.
 
+// test menial doc change
+
 ## Generating the Change Log
 
 We generate the change log based off of the new commits that are being staged for production. The change log generator helps us automate the process of generating the `CHANGELOG.md` with the correct format and commits being staged.
