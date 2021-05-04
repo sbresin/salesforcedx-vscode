@@ -65,7 +65,7 @@ function getSOQLVirtualContent(
   soqlBlock: { queryText: string; location: any }
 ): string {
   const eol = eolForDocument(document);
-  let content = document
+  const blankedContent = document
     .getText()
     .split(eol)
     .map(line => {
@@ -73,10 +73,14 @@ function getSOQLVirtualContent(
     })
     .join(eol);
 
-  content =
-    content.slice(0, soqlBlock.location.startIndex) +
+  const content =
+    blankedContent.slice(0, soqlBlock.location.startIndex) +
+    ' ' +
     soqlBlock.queryText +
-    content.slice(soqlBlock.location.startIndex + soqlBlock.queryText.length);
+    ' ' +
+    blankedContent.slice(
+      soqlBlock.location.startIndex + soqlBlock.queryText.length + 2
+    );
 
   return content;
 }
@@ -98,7 +102,12 @@ export const soqlMiddleware: Middleware = {
       if (
         !insideApexBindingExpression(document, soqlBlock.queryText, position)
       ) {
-        return await doSOQLCompletion(document, position, context, soqlBlock);
+        return await doSOQLCompletion(
+          document,
+          position.with({ character: position.character }),
+          context,
+          soqlBlock
+        );
       } else {
         return items.filter(
           i => i.label !== SOQL_SPECIAL_COMPLETION_ITEM_LABEL

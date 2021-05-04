@@ -95,12 +95,12 @@ describe('Test embedded SOQL middleware to forward to SOQL LSP for code-completi
       ];
       const soqlOnlyLines: string[] = [
         '            ',
-        '                               SELECT Id   ',
+        '                               SELECT Id |  ',
         ' '
       ];
       const apexCode = lines.join('\n');
+      const soqlCode = soqlOnlyLines.join('\n');
 
-      // const executeCommandSpy = sandbox.spy(commands, 'executeCommand');
       const executeCommandSpy = sandbox
         .stub(commands, 'executeCommand')
         .returns([FAKE_SOQL_COMPLETION_ITEM]);
@@ -111,7 +111,7 @@ describe('Test embedded SOQL middleware to forward to SOQL LSP for code-completi
       const items = await invokeSoqlMiddleware(doc, position, [
         FAKE_APEX_COMPLETION_ITEM,
         createApexLSPSpecialSOQLCompletionItem('SELECT Id ', {
-          startIndex: apexCode.indexOf('SELECT Id'),
+          startIndex: apexCode.indexOf('[SELECT Id'),
           endIndex: apexCode.indexOf('];'),
           line: 2,
           column: lines[1].indexOf('SELECT')
@@ -126,7 +126,7 @@ describe('Test embedded SOQL middleware to forward to SOQL LSP for code-completi
       const soqlVirtualDoc = await vscode.workspace.openTextDocument(
         virtualDocUri
       );
-      expect(soqlVirtualDoc.getText()).to.equal(soqlOnlyLines.join('\n'));
+      expect(soqlVirtualDoc.getText()).to.equal(soqlCode.replace('|', ''));
     });
   });
 });
