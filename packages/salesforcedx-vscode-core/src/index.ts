@@ -83,6 +83,7 @@ import { ENABLE_SOBJECT_REFRESH_ON_STARTUP, SFDX_CORE_CONFIGURATION_NAME } from 
 import { getDefaultUsernameOrAlias } from './context';
 import { workspaceContext } from './context';
 import * as decorators from './decorators';
+import { localStorageService } from './memento';
 import { isDemoMode } from './modes/demo-mode';
 import { notificationService, ProgressNotification } from './notifications';
 import { orgBrowser } from './orgBrowser';
@@ -505,6 +506,8 @@ export async function activate(context: vscode.ExtensionContext) {
   ));
   await telemetryService.initializeService(context, name, aiKey, version);
   showTelemetryMessage(context);
+
+  localStorageService.initialize(context.globalState);
 
   // Task View
   const treeDataProvider = vscode.window.registerTreeDataProvider(
