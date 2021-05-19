@@ -14,6 +14,10 @@ import {
   ContinueResponse
 } from '@salesforce/salesforcedx-utils-vscode/out/src/types/index';
 import { ComponentSet } from '@salesforce/source-deploy-retrieve';
+import { createReadStream, createWriteStream } from 'fs';
+import { homedir } from 'os';
+import { basename, join } from 'path';
+import { withParser } from 'stream-json/streamers/StreamArray';
 import * as vscode from 'vscode';
 import { channelService } from '../channels';
 import { nls } from '../messages';
@@ -28,12 +32,6 @@ import {
   SfdxCommandletExecutor,
   SfdxWorkspaceChecker
 } from './util';
-import { streamArray, withParser } from 'stream-json/streamers/StreamArray';
-import { Writable } from 'stream';
-import * as streamjson from 'stream-json';
-import { createReadStream, createWriteStream } from 'fs';
-import { basename, join } from 'path';
-import { homedir } from 'os';
 
 export class ForceSourceRetrieveSourcePathExecutor extends SfdxCommandletExecutor<
   string
@@ -104,7 +102,9 @@ export async function forceSourceRetrieveSourcePath(explorerPath: vscode.Uri) {
   let count = 1000;
   const myList = [];
   while (count > 0) {
-     myList.push({ classname: `yellow${count}${basename(explorerPath.fsPath)}` })
+    myList.push({
+      classname: `yellow${count}${basename(explorerPath.fsPath)}`
+    });
     count--;
   }
 
@@ -120,7 +120,6 @@ export async function forceSourceRetrieveSourcePath(explorerPath: vscode.Uri) {
   parser.on('end', () => {
     console.log('all done');
   });
-
 
   // const processingStream = new Writable({
   //   write({ key, value }, encoding, callback) {
