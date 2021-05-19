@@ -28,6 +28,12 @@ import {
   SfdxCommandletExecutor,
   SfdxWorkspaceChecker
 } from './util';
+import { streamArray, withParser } from 'stream-json/streamers/StreamArray';
+import { Writable } from 'stream';
+import * as streamjson from 'stream-json';
+import { createReadStream, createWriteStream } from 'fs';
+import { basename, join } from 'path';
+import { homedir } from 'os';
 
 export class ForceSourceRetrieveSourcePathExecutor extends SfdxCommandletExecutor<
   string
@@ -95,6 +101,45 @@ export class SourcePathChecker implements PostconditionChecker<string> {
 }
 
 export async function forceSourceRetrieveSourcePath(explorerPath: vscode.Uri) {
+  let count = 1000;
+  const myList = [];
+  while (count > 0) {
+     myList.push({ classname: `yellow${count}${basename(explorerPath.fsPath)}` })
+    count--;
+  }
+
+  const writer = createWriteStream(join(homedir(), 'Desktop', 'yesh.json'));
+  const parser = withParser();
+  writer.write(JSON.stringify(myList));
+  // @ts-ignore
+  createReadStream(join(homedir(), 'Desktop', 'yesh.json')).pipe(parser.input);
+  parser.on('data', ({ key, value }) => {
+    console.log(key, value);
+  });
+  // @ts-ignore
+  parser.on('end', () => {
+    console.log('all done');
+  });
+
+
+  // const processingStream = new Writable({
+  //   write({ key, value }, encoding, callback) {
+  //     // any other async actions
+
+  //     // setTimeout(() => {
+  //     //   console.log(value);
+  //     //   //Next record will be read only current one is fully processed
+  //     //   callback();
+  //     // }, 1000);
+  //   },
+  //   //Don't skip this, as we need to operate with objects, not buffers
+  //   objectMode: true
+  // });
+  // // @ts-ignore
+  // filestream.pipe(parser.input);
+  // parser.pipe(processingStream);
+  // processingStream.on('finish', () => console.log('All done'));
+
   if (!explorerPath) {
     const editor = vscode.window.activeTextEditor;
     if (editor && editor.document.languageId !== 'forcesourcemanifest') {
