@@ -11,7 +11,8 @@ import * as vscode from 'vscode';
 import {
   Executable,
   LanguageClient,
-  LanguageClientOptions
+  LanguageClientOptions,
+  RevealOutputChannelOn
 } from 'vscode-languageclient';
 import { LSP_ERR } from './constants';
 import { nls } from './messages';
@@ -148,7 +149,8 @@ export async function createLanguageServer(
     uriConverters: {
       code2Protocol: code2ProtocolConverter,
       protocol2Code: protocol2CodeConverter
-    }
+    },
+    revealOutputChannelOn: RevealOutputChannelOn.Never
   };
 
   const server = await createServer(context);
