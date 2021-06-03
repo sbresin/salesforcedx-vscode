@@ -99,7 +99,9 @@ export class SourcePathChecker implements PostconditionChecker<string> {
 export async function forceSourceRetrieveSourcePath(explorerPath: vscode.Uri) {
   let count = 1000;
   while (count > 0) {
-    localStorageService.setValue(`yellow${count}`, { classname: basename(explorerPath.fsPath) });
+    localStorageService.setValue(`yellow${count}`, {
+      classname: basename(explorerPath.fsPath)
+    });
     count--;
   }
 
@@ -126,7 +128,14 @@ export async function forceSourceRetrieveSourcePath(explorerPath: vscode.Uri) {
   let check = 1000;
   while (check > 0) {
     const yo = localStorageService.getValue(`yellow${check}`);
-    console.log(`this is the local storage value for yellow${check}` + JSON.stringify(yo, null, 2));
+    channelService.appendLine(
+      `this is the local storage value for yellow${check}` +
+        JSON.stringify(yo, null, 2)
+    );
+    console.log(
+      `this is the local storage value for yellow${check}` +
+        JSON.stringify(yo, null, 2)
+    );
     check--;
   }
 
