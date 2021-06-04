@@ -79,7 +79,10 @@ import {
   SfdxWorkspaceChecker
 } from './commands/util';
 import { registerConflictView, setupConflictView } from './conflict';
-import { ENABLE_SOBJECT_REFRESH_ON_STARTUP, SFDX_CORE_CONFIGURATION_NAME } from './constants';
+import {
+  ENABLE_SOBJECT_REFRESH_ON_STARTUP,
+  SFDX_CORE_CONFIGURATION_NAME
+} from './constants';
 import { getDefaultUsernameOrAlias } from './context';
 import { workspaceContext } from './context';
 import * as decorators from './decorators';
@@ -507,7 +510,7 @@ export async function activate(context: vscode.ExtensionContext) {
   await telemetryService.initializeService(context, name, aiKey, version);
   showTelemetryMessage(context);
 
-  localStorageService.initialize(context.globalState);
+  localStorageService.initialize(context.workspaceState);
 
   // Task View
   const treeDataProvider = vscode.window.registerTreeDataProvider(
