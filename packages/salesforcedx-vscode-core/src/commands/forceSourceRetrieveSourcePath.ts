@@ -133,10 +133,10 @@ export async function forceSourceRetrieveSourcePath(explorerPath: vscode.Uri) {
 
   let check = 1000;
   while (check > 0) {
-    const yo = localStorageService.getValue(`yellow${check}`);
+    const nyo = localStorageService.getValue(`yellow${check}`);
     channelService.appendLine(
       `this is the local storage value for yellow${check}` +
-        JSON.stringify(yo, null, 2)
+        JSON.stringify(nyo, null, 2)
     );
     // console.log(
     //   `this is the local storage value for yellow${check}` +
