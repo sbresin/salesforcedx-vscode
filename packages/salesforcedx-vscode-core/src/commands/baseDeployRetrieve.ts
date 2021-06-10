@@ -18,6 +18,7 @@ import { ContinueResponse } from '@salesforce/salesforcedx-utils-vscode/out/src/
 import {
   ComponentSet,
   DeployResult,
+  FileProperties,
   MetadataApiDeploy,
   MetadataApiRetrieve,
   registry,
@@ -148,6 +149,10 @@ export abstract class DeployExecutor<T> extends DeployRetrieveExecutor<T> {
         if (!success) {
           handleDeployDiagnostics(result, BaseDeployExecutor.errorCollection);
         }
+        PersistentStorageService.getInstance().setPropertiesForFilesDeploy(
+          result.components.getSourceComponents(),
+          result.response
+        );
       }
     } finally {
       await DeployQueue.get().unlock();
@@ -232,7 +237,7 @@ export abstract class RetrieveExecutor<T> extends DeployRetrieveExecutor<T> {
       const relativePackageDirs = await SfdxPackageDirectories.getPackageDirectoryPaths();
       const output = this.createOutput(result, relativePackageDirs);
       channelService.appendLine(output);
-      PersistentStorageService.getInstance().setPropertiesForFiles(result.response.fileProperties);
+      PersistentStorageService.getInstance().setPropertiesForFilesRetrieve(result.response.fileProperties);
     }
   }
 
