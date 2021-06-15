@@ -11,6 +11,10 @@ import {
   LibraryCommandletExecutor
 } from '@salesforce/salesforcedx-utils-vscode/out/src';
 import {
+  ForceOrgDisplay,
+  OrgInfo
+} from '@salesforce/salesforcedx-utils-vscode/out/src/cli';
+import {
   Row,
   Table
 } from '@salesforce/salesforcedx-utils-vscode/out/src/output';
@@ -31,6 +35,7 @@ import { join } from 'path';
 import * as vscode from 'vscode';
 import { BaseDeployExecutor } from '.';
 import { channelService, OUTPUT_CHANNEL } from '../channels';
+import { PersistentStorageService } from '../conflict/persistentStorageService';
 import { TELEMETRY_METADATA_COUNT } from '../constants';
 import { workspaceContext } from '../context';
 import { handleDeployDiagnostics } from '../diagnostics';
@@ -139,13 +144,39 @@ export abstract class DeployExecutor<T> extends DeployRetrieveExecutor<T> {
         BaseDeployExecutor.errorCollection.clear();
 
         const relativePackageDirs = await SfdxPackageDirectories.getPackageDirectoryPaths();
-        const output = this.createOutput(result, relativePackageDirs);
-        channelService.appendLine(output);
+        if (
+          vscode.workspace.workspaceFolders &&
+          vscode.workspace.workspaceFolders[0]
+        ) {
+          const sfdxProject = vscode.workspace.workspaceFolders[0].uri.fsPath; // 'Users/vyao/saleforcedx-vscode/packages/system-tests/assets/sfdx-simple'
+          // use workspaceFolderBasename?
+          const command = new ForceOrgDisplay();
+          const orgInfo: OrgInfo = await command.getOrgInfo(sfdxProject);
+          console.log(orgInfo); // use orgInfo.alias? e.g. VscodePlayGround
+          const defaultOutput = join(
+            getRootWorkspacePath(),
+            (await SfdxPackageDirectories.getDefaultPackageDir()) ?? ''
+          );
+          console.log(defaultOutput); // 'Users/vyao/saleforcedx-vscode/packages/system-tests/assets/test-app'
+          console.log(relativePackageDirs); // ['test-app']
+          const output = this.createOutput(result, relativePackageDirs);
+          channelService.appendLine(output);
+          const WORKSPACE_PATH = join(getRootWorkspacePath(), '..'); // 'Users/vyao/saleforcedx-vscode/packages/system-tests/assets'
+          const PROJECT_NAME = 'sfdx-simple';
+          const ORG_NAME = 'test-org';
+          const cache = PersistentStorageService.getInstance();
+          cache.setPropertiesForFilesDeploy(
+            ORG_NAME,
+            PROJECT_NAME,
+            result.components,
+            result.response
+          );
 
-        const success = result.response.status === RequestStatus.Succeeded;
+          const success = result.response.status === RequestStatus.Succeeded;
 
-        if (!success) {
-          handleDeployDiagnostics(result, BaseDeployExecutor.errorCollection);
+          if (!success) {
+            handleDeployDiagnostics(result, BaseDeployExecutor.errorCollection);
+          }
         }
       }
     } finally {
@@ -231,6 +262,14 @@ export abstract class RetrieveExecutor<T> extends DeployRetrieveExecutor<T> {
       const relativePackageDirs = await SfdxPackageDirectories.getPackageDirectoryPaths();
       const output = this.createOutput(result, relativePackageDirs);
       channelService.appendLine(output);
+      const PROJECT_NAME = 'sfdx-simple';
+      const ORG_NAME = 'test-org';
+      const cache = PersistentStorageService.getInstance();
+      cache.setPropertiesForFilesRetrieve(
+        ORG_NAME,
+        PROJECT_NAME,
+        result.response.fileProperties
+      );
     }
   }
 
