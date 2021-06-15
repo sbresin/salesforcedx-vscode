@@ -301,8 +301,6 @@ describe('Base Deploy Retrieve Commands', () => {
 
     it('should store properties in metadata cache on successful deploy', async () => {
       const executor = new TestDeploy();
-      const PROJECT_NAME = 'sfdx-simple';
-      const ORG_NAME = 'test-org';
       const deployPropsOne = {
         name: 'One',
         fullName: 'One',
@@ -347,9 +345,9 @@ describe('Base Deploy Retrieve Commands', () => {
       await executor.run({data: {}, type: 'CONTINUE' });
 
       expect(executor.cacheSpy.callCount).to.equal(1);
-      expect(executor.cacheSpy.args[0][2].components.size).to.equal(2);
-      expect(cache.getPropertiesForFile(cache.makeKey(ORG_NAME, PROJECT_NAME, 'ApexClass', 'One'))?.lastModifiedDate).to.equal('Yesterday');
-      expect(cache.getPropertiesForFile(cache.makeKey(ORG_NAME, PROJECT_NAME, 'CustomObject', 'Two'))?.lastModifiedDate).to.equal('Yesterday');
+      expect(executor.cacheSpy.args[0][0].components.size).to.equal(2);
+      expect(cache.getPropertiesForFile(cache.makeKey('ApexClass', 'One'))?.lastModifiedDate).to.equal('Yesterday');
+      expect(cache.getPropertiesForFile(cache.makeKey('CustomObject', 'Two'))?.lastModifiedDate).to.equal('Yesterday');
     });
 
     it('should not store any properties in metadata cache on failed deploy', async () => {
@@ -367,7 +365,7 @@ describe('Base Deploy Retrieve Commands', () => {
       await executor.run({data: {}, type: 'CONTINUE' });
 
       expect(executor.cacheSpy.callCount).to.equal(1);
-      expect(executor.cacheSpy.args[0][2].components.size).to.equal(0);
+      expect(executor.cacheSpy.args[0][0].components.size).to.equal(0);
     });
 
     describe('Result Output', () => {
@@ -620,16 +618,14 @@ describe('Base Deploy Retrieve Commands', () => {
         new ComponentSet()
       );
       const cache = PersistentStorageService.getInstance();
-      const PROJECT_NAME = 'sfdx-simple';
-      const ORG_NAME = 'test-org';
       executor.startStub.resolves(mockRetrieveResult);
 
       await executor.run({data: {}, type: 'CONTINUE' });
 
       expect(executor.cacheSpy.callCount).to.equal(1);
-      expect(executor.cacheSpy.args[0][2].length).to.equal(2);
-      expect(cache.getPropertiesForFile(cache.makeKey(ORG_NAME, PROJECT_NAME, 'ApexClass', 'one'))?.lastModifiedDate).to.equal('Today');
-      expect(cache.getPropertiesForFile(cache.makeKey(ORG_NAME, PROJECT_NAME, 'CustomObject', 'two'))?.lastModifiedDate).to.equal('Yesterday');
+      expect(executor.cacheSpy.args[0][0].length).to.equal(2);
+      expect(cache.getPropertiesForFile(cache.makeKey('ApexClass', 'one'))?.lastModifiedDate).to.equal('Today');
+      expect(cache.getPropertiesForFile(cache.makeKey('CustomObject', 'two'))?.lastModifiedDate).to.equal('Yesterday');
     });
 
     it('should not store any properties in metadata cache on failed retrieve', async () => {
@@ -646,7 +642,7 @@ describe('Base Deploy Retrieve Commands', () => {
       await executor.run({data: {}, type: 'CONTINUE' });
 
       expect(executor.cacheSpy.callCount).to.equal(1);
-      expect(executor.cacheSpy.args[0][2].length).to.equal(0);
+      expect(executor.cacheSpy.args[0][0].length).to.equal(0);
     });
 
     describe('Result Output', () => {
