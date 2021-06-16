@@ -11,10 +11,6 @@ import {
   LibraryCommandletExecutor
 } from '@salesforce/salesforcedx-utils-vscode/out/src';
 import {
-  ForceOrgDisplay,
-  OrgInfo
-} from '@salesforce/salesforcedx-utils-vscode/out/src/cli';
-import {
   Row,
   Table
 } from '@salesforce/salesforcedx-utils-vscode/out/src/output';
