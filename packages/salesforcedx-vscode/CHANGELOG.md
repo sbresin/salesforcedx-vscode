@@ -1,3 +1,11 @@
+# 52.0.0 - June 16, 2021
+
+## Fixed
+
+#### salesforcedx-vscode-core
+
+- Use correct message for file diffs ([PR #3304](https://github.com/forcedotcom/salesforcedx-vscode/pull/3304))
+
 # 51.17.0 - June 10, 2021
 
 ## Added
