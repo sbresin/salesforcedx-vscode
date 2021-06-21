@@ -13,8 +13,8 @@ export type ConflictFile = {
   relPath: string;
   localPath: string;
   remotePath: string;
-  localLastModifiedDate: string;
-  remoteLastModifiedDate: string;
+  localLastModifiedDate?: string;
+  remoteLastModifiedDate?: string;
 };
 
 export class ConflictNode extends vscode.TreeItem {
@@ -57,8 +57,12 @@ export class ConflictFileNode extends ConflictNode {
   constructor(conflict: ConflictFile, parent: ConflictNode) {
     super(conflict.fileName, vscode.TreeItemCollapsibleState.Expanded, parent);
     this._conflict = conflict;
-    this.addConflictNode(new ConflictNode(`Remote LastModifiedDate: ${conflict.remoteLastModifiedDate}`, vscode.TreeItemCollapsibleState.None, this));
-    this.addConflictNode(new ConflictNode(`Local LastModifiedDate: ${conflict.remoteLastModifiedDate}`, vscode.TreeItemCollapsibleState.None, this));
+    if (conflict.remoteLastModifiedDate) {
+      this.addConflictNode(new ConflictNode(`Remote LastModifiedDate: ${conflict.remoteLastModifiedDate.toLocaleString()}`, vscode.TreeItemCollapsibleState.None, this));
+    }
+    if (conflict.localLastModifiedDate) {
+      this.addConflictNode(new ConflictNode(`Local LastModifiedDate: ${conflict.localLastModifiedDate.toLocaleString()}`, vscode.TreeItemCollapsibleState.None, this));
+    }
   }
 
   public attachCommands() {

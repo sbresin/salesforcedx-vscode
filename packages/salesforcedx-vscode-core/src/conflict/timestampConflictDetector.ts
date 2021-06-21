@@ -27,9 +27,7 @@ export class TimestampConflictDetector {
     remoteRoot: '',
     different: new Set<TimestampFileProperties>(),
     scannedLocal: 0,
-    scannedRemote: 0,
-    localLastModifiedDate: '',
-    remoteLastModifiedDate: ''
+    scannedRemote: 0
   };
 
   constructor() {
@@ -55,12 +53,12 @@ export class TimestampConflictDetector {
     const cache = PersistentStorageService.getInstance();
     const conflicts: Set<TimestampFileProperties> = new Set<TimestampFileProperties>();
     data.forEach(component => {
-      let lastModifiedInOrg: string;
-      let lastModifiedInCache: string;
+      let lastModifiedInOrg: string | undefined;
+      let lastModifiedInCache: string | undefined;
 
       lastModifiedInOrg = component.lastModifiedDate;
       const key = cache.makeKey(component.cacheComponent.type.name, component.cacheComponent.fullName);
-      lastModifiedInCache = cache.getPropertiesForFile(key)?.lastModifiedDate ?? '';
+      lastModifiedInCache = cache.getPropertiesForFile(key)?.lastModifiedDate;
       if (!lastModifiedInCache || lastModifiedInOrg !== lastModifiedInCache) {
         const differences = this.differ.diffComponents(component.projectComponent, component.cacheComponent, this.diffs.localRoot, this.diffs.remoteRoot);
         differences.forEach(difference => {

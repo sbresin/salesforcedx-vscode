@@ -9,8 +9,8 @@ import * as fs from 'fs';
 import * as path from 'path';
 export interface TimestampFileProperties {
   path: string;
-  localLastModifiedDate: string;
-  remoteLastModifiedDate: string;
+  localLastModifiedDate: string | undefined;
+  remoteLastModifiedDate: string | undefined;
 }
 
 export interface TimestampDirectoryDiffResults {
@@ -19,8 +19,6 @@ export interface TimestampDirectoryDiffResults {
   remoteRoot: string;
   scannedLocal: number;
   scannedRemote: number;
-  localLastModifiedDate: string;
-  remoteLastModifiedDate: string;
 }
 
 export interface DirectoryDiffResults {

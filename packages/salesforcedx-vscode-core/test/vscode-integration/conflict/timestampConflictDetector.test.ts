@@ -132,9 +132,11 @@ describe('Timestamp Conflict Detector Execution', () => {
       path.normalize('/a/b/c')
     ]);
 
-    expect(results.different).to.have.all.keys(
-      path.normalize('classes/HandlerCostCenter.cls')
-    );
+    expect(results.different).to.eql(new Set([{
+      path: path.normalize('classes/HandlerCostCenter.cls'),
+      localLastModifiedDate: 'Yesteday',
+      remoteLastModifiedDate: 'Today'
+    }]));
   });
 
   it('Should not report differences if the component is only local', async () => {
