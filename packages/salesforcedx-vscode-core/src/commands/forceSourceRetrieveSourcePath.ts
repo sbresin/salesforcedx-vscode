@@ -28,6 +28,7 @@ import {
   SfdxCommandletExecutor,
   SfdxWorkspaceChecker
 } from './util';
+import { ConflictDetectionMessages, TimestampConflictChecker } from './util/postconditionCheckers';
 
 export class ForceSourceRetrieveSourcePathExecutor extends SfdxCommandletExecutor<
   string
@@ -120,7 +121,11 @@ export async function forceSourceRetrieveSourcePath(explorerPath: vscode.Uri) {
     sfdxCoreSettings.getBetaDeployRetrieve()
       ? new LibraryRetrieveSourcePathExecutor()
       : new ForceSourceRetrieveSourcePathExecutor(),
-    new SourcePathChecker()
+    // new SourcePathChecker()
+    new TimestampConflictChecker(false, {
+      warningMessageKey: 'test placeholder',
+      commandHint: (input: string) => 'test placeholder'
+    })
   );
   await commandlet.run();
 }

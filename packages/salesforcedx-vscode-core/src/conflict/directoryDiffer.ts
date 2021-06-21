@@ -9,11 +9,14 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 export interface DirectoryDiffResults {
-  different: Set<string>;
+  // different: Set<string>;
+  different: Set<Map<string, string>>;
   localRoot: string;
   remoteRoot: string;
   scannedLocal: number;
   scannedRemote: number;
+  localLastModifiedDate?: string;
+  remoteLastModifiedDate?: string;
 }
 
 export interface DirectoryDiffer {
@@ -34,7 +37,8 @@ export class CommonDirDirectoryDiffer implements DirectoryDiffer {
     remoteSourcePath: string
   ): DirectoryDiffResults {
     const localSet = this.listFiles(localSourcePath);
-    const different = new Set<string>();
+    // const different = new Set<string>();
+    const different = new Set<Map<string, string>>();
 
     // process remote files to generate differences
     let scannedRemote = 0;
@@ -44,7 +48,12 @@ export class CommonDirDirectoryDiffer implements DirectoryDiffer {
         const file1 = path.join(localSourcePath, stats.relPath);
         const file2 = path.join(remoteSourcePath, stats.relPath);
         if (this.filesDiffer(file1, file2)) {
-          different.add(stats.relPath);
+          // different.add(stats.relPath);
+          different.add(new Map([
+            ['path', stats.relPath],
+            ['localLastModifiedDate', stats.relPath],
+            ['remoteLastModifiedDate', stats.relPath]
+          ]));
         }
       }
     });

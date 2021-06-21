@@ -23,7 +23,8 @@ export class TimestampConflictDetector {
   private static EMPTY_DIFFS = {
     localRoot: '',
     remoteRoot: '',
-    different: new Set<string>(),
+    // different: new Set<string>(),
+    different: new Set<Map<string, string>>(),
     scannedLocal: 0,
     scannedRemote: 0
   };
@@ -49,21 +50,26 @@ export class TimestampConflictDetector {
     data: CorrelatedComponent[]
   ) {
     const cache = PersistentStorageService.getInstance();
-    const conflicts: Set<string> = new Set<string>();
+    // const conflicts: Set<string> = new Set<string>();
+    const conflicts: Set<Map<string, string>> = new Set<Map<string, string>>();
     data.forEach(component => {
-      let lastModifiedInOrg;
-      let lastModifiedInCache;
+      let lastModifiedInOrg: string;
+      let lastModifiedInCache: string;
 
       lastModifiedInOrg = component.lastModifiedDate;
       const key = cache.makeKey(component.cacheComponent.type.name, component.cacheComponent.fullName);
-      lastModifiedInCache = cache.getPropertiesForFile(key)?.lastModifiedDate;
+      lastModifiedInCache = cache.getPropertiesForFile(key)?.lastModifiedDate ?? 'lastModifiedInCache not found';
       if (!lastModifiedInCache || lastModifiedInOrg !== lastModifiedInCache) {
         const differences = this.differ.diffComponents(component.projectComponent, component.cacheComponent, this.diffs.localRoot, this.diffs.remoteRoot);
         differences.forEach(difference => {
           const cachePathRelative = relative(this.diffs.remoteRoot, difference.cachePath);
           const projectPathRelative = relative(this.diffs.localRoot, difference.projectPath);
           if (cachePathRelative === projectPathRelative) {
-            conflicts.add(cachePathRelative);
+            conflicts.add(new Map([
+              ['path', cachePathRelative],
+              ['localLastModifiedDate', lastModifiedInCache],
+              ['remoteLastModifiedDate', lastModifiedInOrg]
+            ]));
           }
         });
       }

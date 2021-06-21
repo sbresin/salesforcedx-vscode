@@ -42,7 +42,8 @@ export class ConflictDetector {
   private static EMPTY_DIFFS = {
     localRoot: '',
     remoteRoot: '',
-    different: new Set<string>(),
+    // different: new Set<string>(),
+    different: new Set<Map<string, string>>(),
     scannedLocal: 0,
     scannedRemote: 0
   };
