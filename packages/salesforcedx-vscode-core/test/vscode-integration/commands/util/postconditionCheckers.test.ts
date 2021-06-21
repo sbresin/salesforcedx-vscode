@@ -24,8 +24,10 @@ import { TimestampConflictChecker } from '../../../../src/commands/util/postcond
 import {
   conflictDetector,
   conflictView,
-  DirectoryDiffResults
+  DirectoryDiffResults,
+  TimestampDirectoryDiffResults
 } from '../../../../src/conflict';
+import { TimestampFileProperties } from '../../../../src/conflict/directoryDiffer';
 import { nls } from '../../../../src/messages';
 import { notificationService } from '../../../../src/notifications';
 import { sfdxCoreSettings } from '../../../../src/settings';
@@ -356,100 +358,100 @@ describe('Postcondition Checkers', () => {
       expect(response.type).to.equal('CANCEL');
     });
 
-    // it('Should return ContinueResponse when no conflicts are detected', async () => {
-    //   const postChecker = new ConflictDetectionChecker(emptyMessages);
-    //   const response = await postChecker.handleConflicts(
-    //     'manifest.xml',
-    //     'admin@example.com',
-    //     { different: new Set<string>() } as DirectoryDiffResults
-    //   );
+    it('Should return ContinueResponse when no conflicts are detected', async () => {
+      const postChecker = new ConflictDetectionChecker(emptyMessages);
+      const response = await postChecker.handleConflicts(
+        'manifest.xml',
+        'admin@example.com',
+        { different: new Set<string>() } as DirectoryDiffResults
+      );
 
-    //   expect(response.type).to.equal('CONTINUE');
-    //   expect((response as ContinueResponse<string>).data).to.equal(
-    //     'manifest.xml'
-    //   );
-    //   expect(appendLineStub.notCalled).to.equal(true);
-    // });
+      expect(response.type).to.equal('CONTINUE');
+      expect((response as ContinueResponse<string>).data).to.equal(
+        'manifest.xml'
+      );
+      expect(appendLineStub.notCalled).to.equal(true);
+    });
 
-    // it('Should post a warning and return CancelResponse when conflicts are detected and cancelled', async () => {
-    //   const postChecker = new ConflictDetectionChecker(retrieveMessages);
-    //   const results = {
-    //     different: new Set<string>([
-    //       'main/default/objects/Property__c/fields/Broker__c.field-meta.xml',
-    //       'main/default/aura/auraPropertySummary/auraPropertySummaryController.js'
-    //     ]),
-    //     scannedLocal: 4,
-    //     scannedRemote: 6
-    //   } as DirectoryDiffResults;
-    //   modalStub.returns('Cancel');
+    it('Should post a warning and return CancelResponse when conflicts are detected and cancelled', async () => {
+      const postChecker = new ConflictDetectionChecker(retrieveMessages);
+      const results = {
+        different: new Set<string>([
+          'main/default/objects/Property__c/fields/Broker__c.field-meta.xml',
+          'main/default/aura/auraPropertySummary/auraPropertySummaryController.js'
+        ]),
+        scannedLocal: 4,
+        scannedRemote: 6
+      } as DirectoryDiffResults;
+      modalStub.returns('Cancel');
 
-    //   const response = await postChecker.handleConflicts(
-    //     'package.xml',
-    //     'admin@example.com',
-    //     results
-    //   );
-    //   expect(response.type).to.equal('CANCEL');
+      const response = await postChecker.handleConflicts(
+        'package.xml',
+        'admin@example.com',
+        results
+      );
+      expect(response.type).to.equal('CANCEL');
 
-    //   expect(modalStub.firstCall.args.slice(1)).to.eql([
-    //     nls.localize('conflict_detect_override'),
-    //     nls.localize('conflict_detect_show_conflicts')
-    //   ]);
+      expect(modalStub.firstCall.args.slice(1)).to.eql([
+        nls.localize('conflict_detect_override'),
+        nls.localize('conflict_detect_show_conflicts')
+      ]);
 
-    //   expect(channelOutput).to.include.members([
-    //     nls.localize('conflict_detect_conflict_header', 2, 6, 4),
-    //     normalize(
-    //       'main/default/objects/Property__c/fields/Broker__c.field-meta.xml'
-    //     ),
-    //     normalize(
-    //       'main/default/aura/auraPropertySummary/auraPropertySummaryController.js'
-    //     ),
-    //     nls.localize('conflict_detect_command_hint', 'package.xml')
-    //   ]);
+      expect(channelOutput).to.include.members([
+        nls.localize('conflict_detect_conflict_header', 2, 6, 4),
+        normalize(
+          'main/default/objects/Property__c/fields/Broker__c.field-meta.xml'
+        ),
+        normalize(
+          'main/default/aura/auraPropertySummary/auraPropertySummaryController.js'
+        ),
+        nls.localize('conflict_detect_command_hint', 'package.xml')
+      ]);
 
-    //   expect(conflictViewStub.calledOnce).to.equal(true);
-    // });
+      expect(conflictViewStub.calledOnce).to.equal(true);
+    });
 
-    // it('Should post a warning and return ContinueResponse when conflicts are detected and overwritten', async () => {
-    //   const postChecker = new ConflictDetectionChecker(retrieveMessages);
-    //   const results = {
-    //     different: new Set<string>('MyClass.cls')
-    //   } as DirectoryDiffResults;
-    //   modalStub.returns(nls.localize('conflict_detect_override'));
+    it('Should post a warning and return ContinueResponse when conflicts are detected and overwritten', async () => {
+      const postChecker = new ConflictDetectionChecker(retrieveMessages);
+      const results = {
+        different: new Set<string>('MyClass.cls')
+      } as DirectoryDiffResults;
+      modalStub.returns(nls.localize('conflict_detect_override'));
 
-    //   const response = await postChecker.handleConflicts(
-    //     'manifest.xml',
-    //     'admin@example.com',
-    //     results
-    //   );
-    //   expect(response.type).to.equal('CONTINUE');
+      const response = await postChecker.handleConflicts(
+        'manifest.xml',
+        'admin@example.com',
+        results
+      );
+      expect(response.type).to.equal('CONTINUE');
 
-    //   expect(modalStub.firstCall.args.slice(1)).to.eql([
-    //     nls.localize('conflict_detect_override'),
-    //     nls.localize('conflict_detect_show_conflicts')
-    //   ]);
-    // });
+      expect(modalStub.firstCall.args.slice(1)).to.eql([
+        nls.localize('conflict_detect_override'),
+        nls.localize('conflict_detect_show_conflicts')
+      ]);
+    });
 
-    // it('Should post a warning and return CancelResponse when conflicts are detected and conflicts are shown', async () => {
-    //   const postChecker = new ConflictDetectionChecker(retrieveMessages);
-    //   const results = {
-    //     different: new Set<string>('MyClass.cls')
-    //   } as DirectoryDiffResults;
-    //   modalStub.returns(nls.localize('conflict_detect_show_conflicts'));
+    it('Should post a warning and return CancelResponse when conflicts are detected and conflicts are shown', async () => {
+      const postChecker = new ConflictDetectionChecker(retrieveMessages);
+      const results = {
+        different: new Set<string>('MyClass.cls')
+      } as DirectoryDiffResults;
+      modalStub.returns(nls.localize('conflict_detect_show_conflicts'));
 
-    //   const response = await postChecker.handleConflicts(
-    //     'manifest.xml',
-    //     'admin@example.com',
-    //     results
-    //   );
-    //   expect(response.type).to.equal('CANCEL');
+      const response = await postChecker.handleConflicts(
+        'manifest.xml',
+        'admin@example.com',
+        results
+      );
+      expect(response.type).to.equal('CANCEL');
 
-    //   expect(modalStub.firstCall.args.slice(1)).to.eql([
-    //     nls.localize('conflict_detect_override'),
-    //     nls.localize('conflict_detect_show_conflicts')
-    //   ]);
+      expect(modalStub.firstCall.args.slice(1)).to.eql([
+        nls.localize('conflict_detect_override'),
+        nls.localize('conflict_detect_show_conflicts')
+      ]);
 
-    //   expect(conflictViewStub.calledOnce).to.equal(true);
-    // });
+      expect(conflictViewStub.calledOnce).to.equal(true);
+    });
   });
 
   describe('TimestampConflictChecker', () => {
@@ -466,7 +468,7 @@ describe('Postcondition Checkers', () => {
         modalStub = env.stub(notificationService, 'showWarningModal');
         settingsStub = env.stub(sfdxCoreSettings, 'getConflictDetectionEnabled');
         detectorStub = env.stub(conflictDetector, 'checkForConflicts');
-        conflictViewStub = env.stub(conflictView, 'visualizeDifferences');
+        conflictViewStub = env.stub(conflictView, 'timestampVisualizeDifferences');
         appendLineStub = env.stub(channelService, 'appendLine');
         appendLineStub.callsFake(line => channelOutput.push(line));
       });
@@ -516,99 +518,116 @@ describe('Postcondition Checkers', () => {
         expect(response.type).to.equal('CANCEL');
       });
 
-      // it('Should return ContinueResponse when no conflicts are detected', async () => {
-      //   const postChecker = new TimestampConflictChecker(false, emptyMessages);
-      //   const response = await postChecker.handleConflicts(
-      //     'manifest.xml',
-      //     'admin@example.com',
-      //     { different: new Set<string>() } as DirectoryDiffResults
-      //   );
+      it('Should return ContinueResponse when no conflicts are detected', async () => {
+        const postChecker = new TimestampConflictChecker(false, emptyMessages);
+        const response = await postChecker.handleConflicts(
+          'manifest.xml',
+          'admin@example.com',
+          { different: new Set<TimestampFileProperties>() } as TimestampDirectoryDiffResults
+        );
 
-      //   expect(response.type).to.equal('CONTINUE');
-      //   expect((response as ContinueResponse<string>).data).to.equal(
-      //     'manifest.xml'
-      //   );
-      //   expect(appendLineStub.notCalled).to.equal(true);
-      // });
+        expect(response.type).to.equal('CONTINUE');
+        expect((response as ContinueResponse<string>).data).to.equal(
+          'manifest.xml'
+        );
+        expect(appendLineStub.notCalled).to.equal(true);
+      });
 
-      // it('Should post a warning and return CancelResponse when conflicts are detected and cancelled', async () => {
-      //   const postChecker = new TimestampConflictChecker(false, retrieveMessages);
-      //   const results = {
-      //     different: new Set<string>([
-      //       'main/default/objects/Property__c/fields/Broker__c.field-meta.xml',
-      //       'main/default/aura/auraPropertySummary/auraPropertySummaryController.js'
-      //     ]),
-      //     scannedLocal: 4,
-      //     scannedRemote: 6
-      //   } as DirectoryDiffResults;
-      //   modalStub.returns('Cancel');
+      it('Should post a warning and return CancelResponse when conflicts are detected and cancelled', async () => {
+        const postChecker = new TimestampConflictChecker(false, retrieveMessages);
+        const results = {
+          different: new Set<TimestampFileProperties>([
+            {
+            path: 'main/default/objects/Property__c/fields/Broker__c.field-meta.xml',
+            localLastModifiedDate: 'Yesterday',
+            remoteLastModifiedDate: 'Today'
+            },
+            {
+            path: 'main/default/aura/auraPropertySummary/auraPropertySummaryController.js',
+            localLastModifiedDate: 'Yesterday',
+            remoteLastModifiedDate: 'Today'
+            }]),
+          scannedLocal: 4,
+          scannedRemote: 6
+        } as TimestampDirectoryDiffResults;
+        modalStub.returns('Cancel');
 
-      //   const response = await postChecker.handleConflicts(
-      //     'package.xml',
-      //     'admin@example.com',
-      //     results
-      //   );
-      //   expect(response.type).to.equal('CANCEL');
+        const response = await postChecker.handleConflicts(
+          'package.xml',
+          'admin@example.com',
+          results
+        );
+        expect(response.type).to.equal('CANCEL');
 
-      //   expect(modalStub.firstCall.args.slice(1)).to.eql([
-      //     nls.localize('conflict_detect_override'),
-      //     nls.localize('conflict_detect_show_conflicts')
-      //   ]);
+        expect(modalStub.firstCall.args.slice(1)).to.eql([
+          nls.localize('conflict_detect_override'),
+          nls.localize('conflict_detect_show_conflicts')
+        ]);
 
-      //   expect(channelOutput).to.include.members([
-      //     nls.localize('conflict_detect_conflict_header', 2, 6, 4),
-      //     normalize(
-      //       'main/default/objects/Property__c/fields/Broker__c.field-meta.xml'
-      //     ),
-      //     normalize(
-      //       'main/default/aura/auraPropertySummary/auraPropertySummaryController.js'
-      //     ),
-      //     nls.localize('conflict_detect_command_hint', 'package.xml')
-      //   ]);
+        expect(channelOutput).to.include.members([
+          nls.localize('conflict_detect_conflict_header', 2, 6, 4),
+          normalize(
+            'main/default/objects/Property__c/fields/Broker__c.field-meta.xml'
+          ),
+          normalize(
+            'main/default/aura/auraPropertySummary/auraPropertySummaryController.js'
+          ),
+          nls.localize('conflict_detect_command_hint', 'package.xml')
+        ]);
 
-      //   expect(conflictViewStub.calledOnce).to.equal(true);
-      // });
+        expect(conflictViewStub.calledOnce).to.equal(true);
+      });
 
-      // it('Should post a warning and return ContinueResponse when conflicts are detected and overwritten', async () => {
-      //   const postChecker = new TimestampConflictChecker(false, retrieveMessages);
-      //   const results = {
-      //     different: new Set<string>('MyClass.cls')
-      //   } as DirectoryDiffResults;
-      //   modalStub.returns(nls.localize('conflict_detect_override'));
+      it('Should post a warning and return ContinueResponse when conflicts are detected and overwritten', async () => {
+        const postChecker = new TimestampConflictChecker(false, retrieveMessages);
+        const results = {
+          different: new Set<TimestampFileProperties>([
+            {
+            path: 'MyClass.cls',
+            localLastModifiedDate: 'Yesterday',
+            remoteLastModifiedDate: 'Today'
+            }])
+        } as TimestampDirectoryDiffResults;
+        modalStub.returns(nls.localize('conflict_detect_override'));
 
-      //   const response = await postChecker.handleConflicts(
-      //     'manifest.xml',
-      //     'admin@example.com',
-      //     results
-      //   );
-      //   expect(response.type).to.equal('CONTINUE');
+        const response = await postChecker.handleConflicts(
+          'manifest.xml',
+          'admin@example.com',
+          results
+        );
+        expect(response.type).to.equal('CONTINUE');
 
-      //   expect(modalStub.firstCall.args.slice(1)).to.eql([
-      //     nls.localize('conflict_detect_override'),
-      //     nls.localize('conflict_detect_show_conflicts')
-      //   ]);
-      // });
+        expect(modalStub.firstCall.args.slice(1)).to.eql([
+          nls.localize('conflict_detect_override'),
+          nls.localize('conflict_detect_show_conflicts')
+        ]);
+      });
 
-      // it('Should post a warning and return CancelResponse when conflicts are detected and conflicts are shown', async () => {
-      //   const postChecker = new TimestampConflictChecker(false, retrieveMessages);
-      //   const results = {
-      //     different: new Set<string>('MyClass.cls')
-      //   } as DirectoryDiffResults;
-      //   modalStub.returns(nls.localize('conflict_detect_show_conflicts'));
+      it('Should post a warning and return CancelResponse when conflicts are detected and conflicts are shown', async () => {
+        const postChecker = new TimestampConflictChecker(false, retrieveMessages);
+        const results = {
+          different: new Set<TimestampFileProperties>([
+            {
+            path: 'MyClass.cls',
+            localLastModifiedDate: 'Yesterday',
+            remoteLastModifiedDate: 'Today'
+            }])
+        } as TimestampDirectoryDiffResults;
+        modalStub.returns(nls.localize('conflict_detect_show_conflicts'));
 
-      //   const response = await postChecker.handleConflicts(
-      //     'manifest.xml',
-      //     'admin@example.com',
-      //     results
-      //   );
-      //   expect(response.type).to.equal('CANCEL');
+        const response = await postChecker.handleConflicts(
+          'manifest.xml',
+          'admin@example.com',
+          results
+        );
+        expect(response.type).to.equal('CANCEL');
 
-      //   expect(modalStub.firstCall.args.slice(1)).to.eql([
-      //     nls.localize('conflict_detect_override'),
-      //     nls.localize('conflict_detect_show_conflicts')
-      //   ]);
+        expect(modalStub.firstCall.args.slice(1)).to.eql([
+          nls.localize('conflict_detect_override'),
+          nls.localize('conflict_detect_show_conflicts')
+        ]);
 
-      //   expect(conflictViewStub.calledOnce).to.equal(true);
-      // });
+        expect(conflictViewStub.calledOnce).to.equal(true);
+      });
     });
 });

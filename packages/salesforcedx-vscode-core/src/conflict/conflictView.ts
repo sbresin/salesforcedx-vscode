@@ -12,7 +12,7 @@ import { sfdxCoreSettings } from '../settings';
 import { telemetryService } from '../telemetry';
 import { ConflictFile, ConflictNode } from './conflictNode';
 import { ConflictOutlineProvider } from './conflictOutlineProvider';
-import { DirectoryDiffResults } from './directoryDiffer';
+import { DirectoryDiffResults, TimestampDirectoryDiffResults } from './directoryDiffer';
 
 export class ConflictView {
   private static VIEW_ID = 'conflicts';
@@ -68,6 +68,29 @@ export class ConflictView {
     this.dataProvider.onViewChange();
   }
 
+  public timestampVisualizeDifferences(
+    title: string,
+    remoteLabel: string,
+    reveal: boolean,
+    diffResults?: TimestampDirectoryDiffResults,
+    diffsOnly: boolean = false
+  ) {
+    this.diffsOnly = diffsOnly;
+    const conflicts = diffResults
+      ? this.timestampCreateConflictEntries(diffResults, remoteLabel)
+      : [];
+    const emptyLabel = diffsOnly
+      ? nls.localize('conflict_detect_no_differences')
+      : nls.localize('conflict_detect_no_conflicts');
+    this.dataProvider.reset(title, conflicts, emptyLabel);
+    this.updateEnablementMessage();
+
+    if (reveal) {
+      this.revealConflictNode();
+    }
+    this.dataProvider.onViewChange();
+  }
+
   public createConflictEntries(
     diffResults: DirectoryDiffResults,
     remoteLabel: string
@@ -77,12 +100,31 @@ export class ConflictView {
     diffResults.different.forEach(p => {
       conflicts.push({
         remoteLabel,
-        relPath: p.get('path'),
-        fileName: path.basename(p.get('path') ?? ''),
+        relPath: p,
+        fileName: path.basename(p),
+        localPath: diffResults.localRoot,
+        remotePath: diffResults.remoteRoot
+      } as ConflictFile);
+    });
+
+    return conflicts;
+  }
+
+  public timestampCreateConflictEntries(
+    diffResults: TimestampDirectoryDiffResults,
+    remoteLabel: string
+  ): ConflictFile[] {
+    const conflicts: ConflictFile[] = [];
+
+    diffResults.different.forEach(p => {
+      conflicts.push({
+        remoteLabel,
+        relPath: p.path,
+        fileName: path.basename(p.path),
         localPath: diffResults.localRoot,
         remotePath: diffResults.remoteRoot,
-        localLastModifiedDate: p.get('localLastModifiedDate'),
-        remoteLastModifiedDate: p.get('remoteLastModifiedDate')
+        localLastModifiedDate: p.localLastModifiedDate,
+        remoteLastModifiedDate: p.remoteLastModifiedDate
       } as ConflictFile);
     });
 

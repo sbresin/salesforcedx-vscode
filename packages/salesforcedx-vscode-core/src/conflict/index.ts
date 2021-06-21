@@ -20,7 +20,8 @@ export {
 export {
   CommonDirDirectoryDiffer,
   DirectoryDiffer,
-  DirectoryDiffResults
+  DirectoryDiffResults,
+  TimestampDirectoryDiffResults
 } from './directoryDiffer';
 export {
   MetadataCacheCallback,

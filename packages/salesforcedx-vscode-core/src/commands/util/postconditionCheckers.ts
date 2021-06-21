@@ -18,7 +18,8 @@ import {
   conflictDetector,
   conflictView,
   DirectoryDiffResults,
-  MetadataCacheService
+  MetadataCacheService,
+  TimestampDirectoryDiffResults
 } from '../../conflict';
 import { TimestampConflictDetector } from '../../conflict/timestampConflictDetector';
 import { workspaceContext } from '../../context';
@@ -246,8 +247,7 @@ export class ConflictDetectionChecker implements PostconditionChecker<string> {
         )
       );
       results.different.forEach(file => {
-        // channelService.appendLine(normalize(file));
-        channelService.appendLine(normalize(file.get('path') ?? ''));
+        channelService.appendLine(normalize(file));
       });
       channelService.showChannelOutput();
 
@@ -327,7 +327,7 @@ export class TimestampConflictChecker implements PostconditionChecker<string> {
   public async handleConflicts(
     componentPath: string,
     usernameOrAlias: string,
-    results: DirectoryDiffResults
+    results: TimestampDirectoryDiffResults
   ): Promise<ContinueResponse<string> | CancelResponse> {
     const conflictTitle = nls.localize(
       'conflict_detect_view_root',
@@ -347,8 +347,7 @@ export class TimestampConflictChecker implements PostconditionChecker<string> {
         )
       );
       results.different.forEach(file => {
-        // channelService.appendLine(normalize(file));
-        channelService.appendLine(normalize(file.get('path') ?? ''));
+        channelService.appendLine(normalize(file.path));
       });
       channelService.showChannelOutput();
 
@@ -374,7 +373,7 @@ export class TimestampConflictChecker implements PostconditionChecker<string> {
 
         const doReveal =
           choice === nls.localize('conflict_detect_show_conflicts');
-        conflictView.visualizeDifferences(
+        conflictView.timestampVisualizeDifferences(
           conflictTitle,
           usernameOrAlias,
           doReveal,

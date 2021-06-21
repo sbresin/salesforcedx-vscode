@@ -146,7 +146,7 @@ export abstract class DeployExecutor<T> extends DeployRetrieveExecutor<T> {
           result.components,
           result.response
         );
-        const cache = PersistentStorageService.getInstance();
+
         const success = result.response.status === RequestStatus.Succeeded;
 
         if (!success) {

@@ -11,22 +11,25 @@ import {
   DirectoryDiffResults,
   MetadataCacheResult,
   MetadataCacheService,
-  PersistentStorageService
+  PersistentStorageService,
+  TimestampDirectoryDiffResults
 } from './';
 import { ComponentDiffer } from './componentDiffer';
+import { TimestampFileProperties } from './directoryDiffer';
 import { CorrelatedComponent } from './metadataCacheService';
 
 export class TimestampConflictDetector {
   private differ: ComponentDiffer;
-  private diffs: DirectoryDiffResults;
+  private diffs: TimestampDirectoryDiffResults;
   // Probably want a UI update to remove scannedLocal and scannedRemote
   private static EMPTY_DIFFS = {
     localRoot: '',
     remoteRoot: '',
-    // different: new Set<string>(),
-    different: new Set<Map<string, string>>(),
+    different: new Set<TimestampFileProperties>(),
     scannedLocal: 0,
-    scannedRemote: 0
+    scannedRemote: 0,
+    localLastModifiedDate: '',
+    remoteLastModifiedDate: ''
   };
 
   constructor() {
@@ -36,7 +39,7 @@ export class TimestampConflictDetector {
 
   public createDiffs(
     result?: MetadataCacheResult
-  ): DirectoryDiffResults {
+  ): TimestampDirectoryDiffResults {
     if (!result) {
       throw new Error(nls.localize('conflict_detect_empty_results'));
     }
@@ -50,26 +53,25 @@ export class TimestampConflictDetector {
     data: CorrelatedComponent[]
   ) {
     const cache = PersistentStorageService.getInstance();
-    // const conflicts: Set<string> = new Set<string>();
-    const conflicts: Set<Map<string, string>> = new Set<Map<string, string>>();
+    const conflicts: Set<TimestampFileProperties> = new Set<TimestampFileProperties>();
     data.forEach(component => {
       let lastModifiedInOrg: string;
       let lastModifiedInCache: string;
 
       lastModifiedInOrg = component.lastModifiedDate;
       const key = cache.makeKey(component.cacheComponent.type.name, component.cacheComponent.fullName);
-      lastModifiedInCache = cache.getPropertiesForFile(key)?.lastModifiedDate ?? 'lastModifiedInCache not found';
+      lastModifiedInCache = cache.getPropertiesForFile(key)?.lastModifiedDate ?? '';
       if (!lastModifiedInCache || lastModifiedInOrg !== lastModifiedInCache) {
         const differences = this.differ.diffComponents(component.projectComponent, component.cacheComponent, this.diffs.localRoot, this.diffs.remoteRoot);
         differences.forEach(difference => {
           const cachePathRelative = relative(this.diffs.remoteRoot, difference.cachePath);
           const projectPathRelative = relative(this.diffs.localRoot, difference.projectPath);
           if (cachePathRelative === projectPathRelative) {
-            conflicts.add(new Map([
-              ['path', cachePathRelative],
-              ['localLastModifiedDate', lastModifiedInCache],
-              ['remoteLastModifiedDate', lastModifiedInOrg]
-            ]));
+            conflicts.add({
+              path: cachePathRelative,
+              localLastModifiedDate: lastModifiedInCache,
+              remoteLastModifiedDate: lastModifiedInOrg
+            });
           }
         });
       }
