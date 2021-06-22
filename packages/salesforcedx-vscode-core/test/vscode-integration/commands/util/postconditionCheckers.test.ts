@@ -537,9 +537,7 @@ describe('Postcondition Checkers', () => {
           different: new Set<string>([
             'main/default/objects/Property__c/fields/Broker__c.field-meta.xml',
             'main/default/aura/auraPropertySummary/auraPropertySummaryController.js'
-          ]),
-          scannedLocal: 4,
-          scannedRemote: 6
+          ])
         } as DirectoryDiffResults;
         modalStub.returns('Cancel');
 
