@@ -336,7 +336,7 @@ export class TimestampConflictChecker implements PostconditionChecker<string> {
     );
 
     if (results.different.size === 0) {
-      conflictView.visualizeDifferences(conflictTitle, usernameOrAlias, false);
+      conflictView.timestampVisualizeDifferences(conflictTitle, usernameOrAlias, false);
     } else {
       channelService.appendLine(
         nls.localize(
@@ -358,7 +358,7 @@ export class TimestampConflictChecker implements PostconditionChecker<string> {
       );
 
       if (choice === nls.localize('conflict_detect_override')) {
-        conflictView.visualizeDifferences(
+        conflictView.timestampVisualizeDifferences(
           conflictTitle,
           usernameOrAlias,
           false
