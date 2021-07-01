@@ -80,12 +80,12 @@ export class QuickLaunch {
   ): Promise<TestRunResult> {
     const testService = new TestService(connection);
     try {
-      const payload = await testService.buildSyncPayload(
+      const payload = await testService.buildAsyncPayload(
         TestLevel.RunSpecifiedTests,
         testMethod ? `${testClass}.${testMethod}` : undefined,
         testClass
       );
-      const result: TestResult = await testService.runTestSynchronous(payload);
+      const result: TestResult = await testService.runTestAsynchronous(payload);
       if (workspace && workspace.workspaceFolders) {
         const apexTestResultsPath = getTestResultsFolder(
           getRootWorkspacePath(),

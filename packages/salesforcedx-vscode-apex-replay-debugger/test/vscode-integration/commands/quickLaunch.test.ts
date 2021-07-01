@@ -56,9 +56,9 @@ describe('Quick launch apex tests', () => {
     notificationServiceStub = sb.stub(notificationService, 'showErrorMessage');
     sb.stub(workspaceContext, 'getConnection').returns(mockConnection);
     testServiceStub = sb
-      .stub(TestService.prototype, 'runTestSynchronous')
+      .stub(TestService.prototype, 'runTestAsynchronous')
       .resolves({ tests: [{ apexLogId: APEX_LOG_ID }] } as TestResult);
-    buildPayloadStub = sb.stub(TestService.prototype, 'buildSyncPayload');
+    buildPayloadStub = sb.stub(TestService.prototype, 'buildAsyncPayload');
     writeResultFilesStub = sb.stub(TestService.prototype, 'writeResultFiles');
   });
 
