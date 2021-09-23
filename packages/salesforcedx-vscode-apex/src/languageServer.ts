@@ -61,25 +61,53 @@ async function createServer(
       args.push(`-Xmx${jvmMaxHeap}M`);
     }
 
-    if (DEBUG) {
-      args.push(
-        '-Dtrace.protocol=false',
-        `-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${JDWP_DEBUG_PORT},quiet=y`
-      );
-      if (process.env.YOURKIT_PROFILER_AGENT) {
-        args.push(`-agentpath:${process.env.YOURKIT_PROFILER_AGENT}`);
-      }
-    }
+    // if (DEBUG) {
+    //   args.push(
+    //     '-Dtrace.protocol=false',
+    //     `-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=${JDWP_DEBUG_PORT},quiet=y`
+    //   );
+    //   if (process.env.YOURKIT_PROFILER_AGENT) {
+    //     args.push(`-agentpath:${process.env.YOURKIT_PROFILER_AGENT}`);
+    //   }
+    // }
 
     args.push(APEX_LANGUAGE_SERVER_MAIN);
-
     return {
       options: {
         env: process.env,
         stdio: 'pipe'
       },
-      command: javaExecutable,
-      args
+      // ******* Java jar
+      // command: javaExecutable,
+      // args
+
+      // ******* Native image agentlib:
+      // command:
+      //   '/Users/fernandodobladez/.asdf/installs/java/graalvm-21.0.0.2+java8/bin/java',
+      //   args: [
+      //     '-agentlib:native-image-agent=config-merge-dir=/Users/fernandodobladez/graal-native-image-test/META-INF/native-image/',
+      //     '-cp',
+      //     '/Users/fernandodobladez/graal-native-image-test/apex-jorje-lsp-236.0-SNAPSHOT.jar',
+
+      //     '-Ddebug.internal.errors=true',
+      //     `-Ddebug.semantic.errors=${enableSemanticErrors}`,
+      //     `-Ddebug.completion.statistics=${enableCompletionStatistics}`,
+      //     '-Dlwc.typegeneration.disabled=true',
+      //       'apex.jorje.lsp.ApexLanguageServerLauncher'
+      //   ]
+
+      // ******* AOT-compiled, native binary
+      command: path.resolve(
+        context.extensionPath,
+        'out',
+        'apex.jorje.lsp.apexlanguageserverlauncher'
+      ),
+      args: [
+        '-Ddebug.internal.errors=true',
+        `-Ddebug.semantic.errors=${enableSemanticErrors}`,
+        `-Ddebug.completion.statistics=${enableCompletionStatistics}`,
+        '-Dlwc.typegeneration.disabled=true'
+      ]
     };
   } catch (err) {
     vscode.window.showErrorMessage(err);
@@ -107,6 +135,9 @@ function deleteDbIfExists(): void {
 
 function startedInDebugMode(): boolean {
   const args = (process as any).execArgv;
+  console.log(
+    '************************ startedInDebugMode args: ' + JSON.stringify(args)
+  );
   if (args) {
     return args.some(
       (arg: any) =>
@@ -149,6 +180,9 @@ export async function createLanguageServer(
     telemetryService.sendEventData('apexLSPLog', data.properties, data.measures)
   );
 
+  console.log(
+    '======= createLanguageServer(): timestamp: ' + new Date().getTime()
+  );
   return client;
 }
 
