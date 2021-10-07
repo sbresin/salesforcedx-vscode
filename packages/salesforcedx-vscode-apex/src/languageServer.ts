@@ -103,6 +103,11 @@ async function createServer(
         'apex.jorje.lsp.apexlanguageserverlauncher'
       ),
       args: [
+        `-DstandardApexLibraryPath=${path.resolve(
+          context.extensionPath,
+          'out',
+          'StandardApexLibrary'
+        )}`,
         '-Ddebug.internal.errors=true',
         `-Ddebug.semantic.errors=${enableSemanticErrors}`,
         `-Ddebug.completion.statistics=${enableCompletionStatistics}`,

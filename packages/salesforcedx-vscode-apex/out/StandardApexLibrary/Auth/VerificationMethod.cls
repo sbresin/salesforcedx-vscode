@@ -1,0 +1,8 @@
+global enum VerificationMethod {
+EMAIL,
+PASSWORD,
+SALESFORCE_AUTHENTICATOR,
+SMS,
+TOTP,
+U2F
+}

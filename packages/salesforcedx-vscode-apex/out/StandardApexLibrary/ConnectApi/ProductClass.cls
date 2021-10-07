@@ -1,0 +1,5 @@
+global enum ProductClass {
+SIMPLE,
+VARIATION,
+VARIATIONPARENT
+}

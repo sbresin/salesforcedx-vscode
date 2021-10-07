@@ -1,0 +1,5 @@
+global enum SmartDataDiscoveryAIModelTransformationTypeEnum {
+FREETEXTCLUSTERING,
+SENTIMENTANALYSIS,
+TYPOGRAPHICCLUSTERING
+}

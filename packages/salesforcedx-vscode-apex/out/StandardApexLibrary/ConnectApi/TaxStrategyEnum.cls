@@ -1,0 +1,5 @@
+global enum TaxStrategyEnum {
+COPYFROMINVOICELINE,
+IGNORE,
+MANUALOVERRIDE
+}

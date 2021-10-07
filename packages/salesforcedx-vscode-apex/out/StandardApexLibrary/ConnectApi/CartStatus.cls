@@ -1,0 +1,7 @@
+global enum CartStatus {
+ACTIVE,
+CHECKOUT,
+CLOSED,
+PENDINGDELETE,
+PROCESSING
+}
