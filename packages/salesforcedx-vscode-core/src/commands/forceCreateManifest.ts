@@ -5,10 +5,10 @@
  * For full license text, see LICENSE.txt file in the repo root or https://opensource.org/licenses/BSD-3-Clause
  */
 
-import * as vscode from 'vscode';
 import { fs } from '@salesforce/core';
-import { getRootWorkspace, getRootWorkspacePath } from '../util';
-const { ComponentSet } = require('@salesforce/source-deploy-retrieve');
+import { ComponentSet } from '@salesforce/source-deploy-retrieve';
+import * as vscode from 'vscode';
+import { getRootWorkspacePath } from '../util';
 
 export async function forceCreateManifest(sourceUri?: vscode.Uri) {
   const fsPaths: string[] = [];
