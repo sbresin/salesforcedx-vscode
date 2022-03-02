@@ -3,6 +3,7 @@
 const shell = require('shelljs');
 const { checkVSCodeVersion, checkBaseBranch } = require('./validation-utils');
 const logger = require('./logger-util');
+const changeLogGenerator = require('./change-log-generator');
 
 shell.set('-e');
 shell.set('+v');
@@ -67,6 +68,15 @@ if (isRemoteReleaseBranchExist) {
   process.exit(-1);
 }
 
+// Create the new release branch and switch to it
+shell.exec(`git checkout -b ${releaseBranchName}`);
+
+changeLogGenerator.getPreviousReleaseBranch(releaseBranchName);
+const parsedCommits = parseCommits(getCommits(releaseBranch, previousBranch));
+const groupedMessages = getMessagesGroupedByPackage(parsedCommits);
+const changeLog = getChangeLogText(releaseBranch, groupedMessages);
+writeChangeLog(changeLog);
+
 // git clean but keeping node_modules around
 shell.exec('git clean -xfd -e node_modules');
 
@@ -89,10 +99,7 @@ shell.exec('git add lerna.json');
 shell.exec(`git commit -m "chore: update to version ${nextVersion}"`);
 
 // Push version update commits to develop
-shell.exec(`git push origin develop`);
-
-// Create the new release branch and switch to it
-shell.exec(`git checkout -b ${releaseBranchName}`);
+// shell.exec(`git push origin develop`);
 
 // Push new release branch to remote
 shell.exec(`git push -u origin ${releaseBranchName}`);

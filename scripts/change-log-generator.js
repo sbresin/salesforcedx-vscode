@@ -60,6 +60,11 @@ const RELEASE_DATE_ARG = '-t';
 const VERBOSE_LOGGING_ARG = '-v';
 const PACKAGES_TO_IGNORE_ARG = '-i';
 
+
+module.exports = {
+  getPreviousReleaseBranch, parseCommits, getMessagesGroupedByPackage, getChangeLogText, writeChangeLog
+}
+
 function getArgumentValue(arg) {
   const argIndex = process.argv.indexOf(arg);
   if (argIndex > -1) {
