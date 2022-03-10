@@ -1,0 +1,64 @@
+{
+  "lwc": {
+    "modules": [
+      { "dir": "$rootDir/src/modules" },
+      { "npm": "lightning-base-components" }
+    ]
+  },
+  "bundleConfig": { "exclude": ["lwc"] },
+  "assets": [
+    {
+      "alias": "assetsDir",
+      "dir": "$rootDir/src/assets",
+      "urlPath": "/assets"
+    },
+    {
+      "dir": "$rootDir/src/assets/fonts",
+      "urlPath": "/fonts"
+    },
+    {
+      "file": "$rootDir/src/assets/utilitySprite.svg",
+      "urlPath": "/lightning.utilitySprite"
+    },
+    {
+      "file": "$rootDir/src/assets/standardSprite.svg",
+      "urlPath": "/lightning.standardSprite"
+    },
+    {
+      "file": "$rootDir/src/assets/customSprite.svg",
+      "urlPath": "/lightning.customSprite"
+    },
+    {
+      "file": "$rootDir/src/assets/actionSprite.svg",
+      "urlPath": "/lightning.actionSprite"
+    }
+  ],
+  "routes": [
+    {
+      "id": "slds-base",
+      "path": "/",
+      "rootComponent": "previewapp/app",
+      "layoutTemplate": "$layoutsDir/main.html",
+      "bootstrap": {
+        "syntheticShadow": true
+      }
+    }
+  ],
+  "moduleProviders": [
+    "@lwrjs/app-service/moduleProvider",
+    [
+      "@lwrjs/label-module-provider",
+      {
+        "provideDefault": true,
+        "labelDirs": [
+          {
+            "dir": "$rootDir/src/labels",
+            "package": "@salesforce/label"
+          }
+        ]
+      }
+    ],
+    "@lwrjs/lwc-module-provider",
+    "@lwrjs/npm-module-provider"
+  ]
+}

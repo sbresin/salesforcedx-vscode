@@ -76,7 +76,7 @@
     "vscode:package": "vsce package",
     "vscode:sha256": "node ../../scripts/generate-sha256.js >> ../../SHA256",
     "vscode:publish": "node ../../scripts/publish-vsix.js",
-    "compile": "tsc -p ./",
+    "compile": "tsc -p ./ && cp -r ./src/util/.lwr-preview-app ./out/src/service && npm install --prefix ./out/src/service/.lwr-preview-app",
     "lint": "tslint --project .",
     "lint:fix": "npm run lint -- --fix",
     "watch": "tsc -watch -p .",
