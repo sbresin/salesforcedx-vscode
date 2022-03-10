@@ -44,6 +44,7 @@ export const messages = {
     "Something's not right with the filepath. The local development server doesn't recognize the Lightning Web Components module '%s.'",
   force_lightning_lwc_open_text:
     'SFDX: Open Local Development Server in Browser',
+  force_lightning_lwr_preview_text: 'SFDX: Preview Lighting Web Components with Lightning Web Runtime',
   prompt_option_open_browser: 'Open Browser',
   prompt_option_restart: 'Restart',
   force_lwc_test_run_description_text: 'Run LWC test(s)',
