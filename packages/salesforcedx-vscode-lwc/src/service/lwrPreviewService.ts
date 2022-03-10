@@ -37,7 +37,7 @@ export class LwrPreviewService {
 
     const pathSegments = uri.fsPath.split(path.sep);
     if (!this.serverStarted(workspaceFolder.uri.fsPath)) {
-      this.startServer(workspaceFolder, uri, pathSegments);
+      await this.startServer(workspaceFolder, uri, pathSegments);
     }
 
     // Swap previewapp/app content
