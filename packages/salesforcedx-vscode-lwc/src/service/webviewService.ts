@@ -42,7 +42,7 @@ export class WebviewService {
       title,
       {
         viewColumn: previewColumn,
-        preserveFocus: true,
+        preserveFocus: true
       },
       {
         // Enable javascript in the webview
