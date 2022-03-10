@@ -1,3 +1,11 @@
+# 54.4.1 - March 10, 2022
+
+## Fixed
+
+#### salesforcedx-vscode-apex
+
+- Fixed issue running in OSX Monterey, and reverted the source-deploy-retrieve library to v5.12.3
+
 # 54.4.0 - March 9, 2022
 
 ## Fixed
