@@ -3,6 +3,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as tcpPortUsed from 'tcp-port-used';
 import * as vscode from 'vscode';
+import { channelService } from '../channel';
+import { nls } from '../messages';
+import { notificationService } from '../notifications';
+import { telemetryService } from '../telemetry';
 import { webviewService } from './webviewService';
 
 export class LwrPreviewService {
@@ -28,13 +32,23 @@ export class LwrPreviewService {
   }
 
   public async showPreview(uri: vscode.Uri) {
+    if (!uri) {
+      const editor = vscode.window.activeTextEditor;
+      if (editor && editor.document.languageId !== 'forcesourcemanifest') {
+        uri = editor.document.uri;
+      }
+    }
     const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri);
     if (!workspaceFolder) {
       // TODO: report error?
       // untitled document?
+      const errorMessage = nls.localize('unsupported_workspace');
+      telemetryService.sendException('unsupported_workspace', errorMessage);
+      notificationService.showErrorMessage(errorMessage);
+      channelService.appendLine(errorMessage);
+      channelService.showChannelOutput();
       return;
     }
-
     const pathSegments = uri.fsPath.split(path.sep);
     if (!this.serverStarted(workspaceFolder.uri.fsPath)) {
       await this.startServer(workspaceFolder, uri, pathSegments);
