@@ -53,26 +53,10 @@ export class LwrPreviewService {
     if (!this.serverStarted(workspaceFolder.uri.fsPath)) {
       await this.startServer(workspaceFolder, uri, pathSegments);
     }
-
-    // Swap previewapp/app content
-    const componentName = pathSegments[pathSegments.length - 2];
-    // https://stackoverflow.com/questions/47836390/how-to-convert-a-camel-case-string-to-dashes-in-javascript/47836484
-    const camelToDashed = (camel: string) =>
-      camel.replace(/[A-Z]/g, (m: string) => '-' + m.toLowerCase());
-
-    let namespace: string;
-    if (pathSegments.indexOf('modules') === -1) {
-      // HACK for SFDX
-      namespace = 'c';
-    } else {
-      namespace = pathSegments[pathSegments.length - 3];
-    }
+    const componentName = this.getComponentName(pathSegments);
+    const namespace = this.getNamespace(pathSegments);
     const componentFullName = `${namespace}-${camelToDashed(componentName)}`;
-
-    const previewAppBasePath = path.join(
-      __dirname,
-      '.lwr-preview-app/src/modules/previewapp/app/app.html'
-    );
+    const previewAppBasePath = this.getPreviewAppBasePath();
     const result = `<template><${componentFullName}></${componentFullName}></template>`;
 
     fs.writeFile(previewAppBasePath, result, 'utf8', err => {
@@ -80,9 +64,31 @@ export class LwrPreviewService {
         return console.log(err);
       }
     });
-
     // Create webview
     await webviewService.createOrShowWebview();
+  }
+
+  // Swap previewapp/app content
+  public getComponentName(uriPath: string[]): string {
+    return uriPath[uriPath.length - 2];
+  }
+
+  public getPreviewAppBasePath(): string {
+    return path.join(
+      __dirname,
+      '.lwr-preview-app/src/modules/previewapp/app/app.html'
+    );
+  }
+
+  public getNamespace(pathSegments: string[]): string {
+    let namespace: string;
+    if (pathSegments.indexOf('modules') === -1) {
+      // HACK for SFDX : why c?
+      namespace = 'c';
+    } else {
+      namespace = pathSegments[pathSegments.length - 3];
+    }
+    return namespace;
   }
 
   private serverStarted(fsPath: string): boolean | undefined {
@@ -158,6 +164,11 @@ export class LwrPreviewService {
     const timeout = 100000;
     await tcpPortUsed.waitUntilUsed(3000, interval, timeout);
   }
+}
+
+// https://stackoverflow.com/questions/47836390/how-to-convert-a-camel-case-string-to-dashes-in-javascript/47836484
+function camelToDashed(camel: string) {
+  return camel.replace(/[A-Z]/g, (m: string) => '-' + m.toLowerCase());
 }
 
 export const lwrPreviewService = new LwrPreviewService();
